@@ -1,6 +1,4 @@
-package com.example.LMS.CourseManagement.Lesson;
-
-
+package com.example.LMS.CourseManagement.Assignment;
 import com.example.LMS.CourseManagement.Course.Course;
 import jakarta.persistence.*;
 import lombok.*;
@@ -10,16 +8,16 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Lesson {
+public class Assignment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false) // Maps to the course's primary key
-    private Course course; // Each lesson belongs to one course
-    private String title;
-    private String otp; // OTP for attendance
+    private Course course; // Each assignment belongs to one course
 
-//    @ManyToOne
-//    private Course course; // Each lesson belongs to one course
+    private String title;
+    private String description;
 }
+

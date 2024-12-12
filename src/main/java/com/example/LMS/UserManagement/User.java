@@ -1,7 +1,11 @@
 package com.example.LMS.UserManagement;
 
+import com.example.LMS.CourseManagement.Assignment.Assignment;
+import com.example.LMS.CourseManagement.Grade.Grade;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.util.List;
 
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -24,4 +28,6 @@ public abstract class User {
 
     @Enumerated(EnumType.STRING)
     private Role role;
+
+
 }
