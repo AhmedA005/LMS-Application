@@ -1,20 +1,41 @@
 package com.example.LMS.UserManagement.Student;
 
+import com.example.LMS.CourseManagement.Course.Course;
+import com.example.LMS.CourseManagement.Enrollment.Enrollment;
+import com.example.LMS.CourseManagement.Enrollment.EnrollmentRepository;
+import com.example.LMS.CourseManagement.Lesson.Lesson;
+import com.example.LMS.CourseManagement.Lesson.LessonRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
+@RequiredArgsConstructor
 public class StudentService {
-    StudentRepository studentRepository;
+    private final StudentRepository studentRepository;
+    private final EnrollmentRepository enrollmentRepository;
+    private final LessonRepository lessonRepository;
 
-
-    @Autowired
-    public StudentService(StudentRepository studentRepository) {
-        this.studentRepository = studentRepository;
+    public String enrollInCourse(Course course, Student student) {
+        Enrollment enrollment = new Enrollment(null, course, student);
+        enrollmentRepository.save(enrollment);
+        return "Enrolled successfully!";
     }
 
-//    public void enrollCourse(Course course){
-//        List<Course> prerequisites = course.getPre();
-//
-//    }
+    public String markAttendance(Long lessonId, String otp) {
+        Lesson lesson = lessonRepository.findById(lessonId)
+                .orElseThrow(() -> new IllegalArgumentException("Lesson not found"));
+
+        if (!lesson.getOtp().equals(otp)) {
+            throw new IllegalArgumentException("Invalid OTP");
+        }
+        return "Attendance marked successfully!";
+    }
+
+    public List<Student> getAllStudents() {
+        return studentRepository.findAll();
+    }
 }
+
