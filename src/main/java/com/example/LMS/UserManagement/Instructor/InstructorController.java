@@ -27,10 +27,17 @@ public class InstructorController {
     }
 
     @PostMapping("/add-lesson")
-    public ResponseEntity<Lesson> addLesson(@RequestBody Lesson lesson) {
-        return ResponseEntity.ok(instructorService.addLesson(lesson));
+    public ResponseEntity<String> addLesson(@RequestBody Lesson lesson) {
+        instructorService.addLesson(lesson);
+        return ResponseEntity.ok("Lesson added successfully");
     }
 
+
+    @DeleteMapping("/remove-lesson")
+    public ResponseEntity<String> removeLesson(@RequestBody Lesson lesson) {
+        instructorService.removeLesson(lesson);
+        return ResponseEntity.ok("Lesson deleted successfully");
+    }
 
 }
 

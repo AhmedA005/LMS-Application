@@ -24,6 +24,10 @@ public class InstructorService {
         return lessonRepository.save(lesson);
     }
 
+    public void removeLesson(Lesson lesson) {
+        lessonRepository.delete(lesson);
+    }
+
     public void updateCourse(Long courseId, Course updatedCourse) {
         Course course = courseRepository.findById(courseId)
                 .orElseThrow(() -> new IllegalArgumentException("Course not found"));

@@ -24,6 +24,6 @@ public class Course {
     @ManyToOne
     private Instructor instructor; // Each course belongs to one instructor
 
-    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "courseId", cascade = CascadeType.ALL)
     private List<Lesson> lessons; // A course has multiple lessons
 }

@@ -56,5 +56,11 @@ public class AdminController {
         adminService.addCourse(course);
         return ResponseEntity.ok("Course " + course.getTitle() + " added successfully");
     }
+
+    @DeleteMapping("/delete-course")
+    public ResponseEntity<String> deleteCourse(@RequestBody Course course) {
+        adminService.removeCourse(course);
+        return ResponseEntity.ok("Course " + course.getTitle() + " deleted successfully");
+    }
 }
 

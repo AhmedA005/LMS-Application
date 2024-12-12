@@ -14,10 +14,10 @@ public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
+    private Long courseId;
     private String title;
     private String otp; // OTP for attendance
 
-    @ManyToOne
-    private Course course; // Each lesson belongs to one course
+//    @ManyToOne
+//    private Course course; // Each lesson belongs to one course
 }
