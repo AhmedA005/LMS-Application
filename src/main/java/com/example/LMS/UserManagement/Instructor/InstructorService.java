@@ -164,4 +164,23 @@ public class InstructorService {
                 .map(Enrollment::getStudent)
                 .toList();
     }
+
+    public void removeStudentFromCourse(Long instructorId, Long courseId, Long studentId) {
+        // Fetch the course
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+
+        // Ensure the instructor owns the course
+        if (!course.getInstructor().getId().equals(instructorId)) {
+            throw new PermissionDeniedException("Instructor does not have permission to modify this course.");
+        }
+
+        // Fetch the enrollment
+        Enrollment enrollment = enrollmentRepository.findByCourseAndStudentId(course, studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Student is not enrolled in this course."));
+
+        // Remove the enrollment
+        enrollmentRepository.delete(enrollment);
+    }
+
 }

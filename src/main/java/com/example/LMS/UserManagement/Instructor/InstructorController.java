@@ -120,4 +120,22 @@ public class InstructorController {
         List<Student> students = instructorService.getEnrolledStudents(courseId);
         return ResponseEntity.ok(students);
     }
+
+    @DeleteMapping("/remove-student/{courseId}/{studentId}")
+    public ResponseEntity<String> removeStudentFromCourse(
+            @PathVariable Long courseId,
+            @PathVariable Long studentId) {
+        try {
+            Long instructorId = getAuthenticatedInstructorId();
+            instructorService.removeStudentFromCourse(instructorId, courseId, studentId);
+            return ResponseEntity.ok("Student removed from course successfully");
+        } catch (PermissionDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(404).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("An unexpected error occurred");
+        }
+    }
+
 }
