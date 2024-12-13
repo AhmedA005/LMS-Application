@@ -1,5 +1,6 @@
 package com.example.LMS.CourseManagement.Assignment;
 import com.example.LMS.CourseManagement.Course.Course;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -15,6 +16,7 @@ public class Assignment {
 
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false) // Maps to the course's primary key
+    @JsonBackReference
     private Course course; // Each assignment belongs to one course
 
     private String title;

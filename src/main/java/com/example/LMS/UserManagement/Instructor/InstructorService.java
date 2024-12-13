@@ -8,6 +8,7 @@ import com.example.LMS.CourseManagement.Grade.Grade;
 import com.example.LMS.CourseManagement.Grade.GradeRepository;
 import com.example.LMS.CourseManagement.Lesson.Lesson;
 import com.example.LMS.CourseManagement.Lesson.LessonRepository;
+import com.example.LMS.PermissionDeniedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -27,13 +28,20 @@ public class InstructorService {
     }
 
     public void addLesson(Long instructorId, Lesson lesson) {
-        // Ensure the course exists and is owned by the instructor
-        Course course = lesson.getCourse();
+        // Fetch the authenticated instructor
+        Instructor instructor = instructorRepository.findById(instructorId)
+                .orElseThrow(() -> new IllegalArgumentException("Instructor not found"));
 
-        if (course == null || !course.getInstructor().getId().equals(instructorId)) {
-            throw new IllegalArgumentException("You do not have permission to add lessons to this course.");
+        // Fetch the course
+        Course course = courseRepository.findById(lesson.getCourse().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+
+        // Ensure the instructor owns the course
+        if (!course.getInstructor().getId().equals(instructorId)) {
+            throw new PermissionDeniedException("Instructor does not have permission to add lessons to this course.");
         }
 
+        lesson.setCourse(course);
         // Save the lesson
         lessonRepository.save(lesson);
     }
@@ -42,27 +50,46 @@ public class InstructorService {
     }
 
     public void addAssignment(Long instructorId, Assignment assignment) {
-        // Ensure the course exists and is owned by the instructor
-        Course course = assignment.getCourse(); // Access the course directly from the Assignment
+        // Fetch the authenticated instructor
+        Instructor instructor = instructorRepository.findById(instructorId)
+                .orElseThrow(() -> new IllegalArgumentException("Instructor not found"));
 
-        if (course == null || !course.getInstructor().getId().equals(instructorId)) {
-            throw new IllegalArgumentException("You do not have permission to add assignments to this course.");
+        // Fetch the course
+        Course course = courseRepository.findById(assignment.getCourse().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+
+        // Ensure the instructor owns the course
+        if (!course.getInstructor().getId().equals(instructorId)) {
+            throw new PermissionDeniedException("Instructor does not have permission to add assignments to this course.");
         }
+
+        // Link course to assignment
+        assignment.setCourse(course);
 
         // Save the assignment
         assignmentRepository.save(assignment);
     }
+
+
     public void removeAssignment(Assignment assignment) {
         assignmentRepository.delete(assignment);
     }
 
     public void addGrade(Long instructorId, Grade grade) {
-        // Ensure the course exists and is owned by the instructor
-        Course course = grade.getCourse();
+        // Fetch the authenticated instructor
+        Instructor instructor = instructorRepository.findById(instructorId)
+                .orElseThrow(() -> new IllegalArgumentException("Instructor not found"));
 
-        if (course == null || !course.getInstructor().getId().equals(instructorId)) {
-            throw new IllegalArgumentException("You do not have permission to add grades to this course.");
+        // Fetch the course
+        Course course = courseRepository.findById(grade.getCourse().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+
+        // Ensure the instructor owns the course
+        if (!course.getInstructor().getId().equals(instructorId)) {
+            throw new PermissionDeniedException("Instructor does not have permission to add grades to this course.");
         }
+
+        grade.setCourse(course);
 
         // Save the grade
         gradeRepository.save(grade);
