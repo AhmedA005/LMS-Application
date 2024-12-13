@@ -1,8 +1,5 @@
-package com.example.LMS.CourseManagement.Lesson;
-
-
+package com.example.LMS.CourseManagement.Grade;
 import com.example.LMS.CourseManagement.Course.Course;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,16 +8,17 @@ import lombok.*;
 @AllArgsConstructor
 @Getter
 @Setter
-public class Lesson {
+public class Grade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    private Long studentId;
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false) // Maps to the course's primary key
-    @JsonBackReference
-    private Course course; // Each lesson belongs to one course
+    private Course course; // Each grade is associated with one course
+    //Can be enrollmentId
     private String title;
-    private String otp; // OTP for attendance
+    private Long grade;
 
 //    @ManyToOne
 //    private Course course; // Each lesson belongs to one course
