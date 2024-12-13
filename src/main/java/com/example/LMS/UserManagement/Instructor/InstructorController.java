@@ -10,97 +10,106 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/instructor")
 @RequiredArgsConstructor
 public class InstructorController {
     private final InstructorService instructorService;
 
+    // Add Course
     @PostMapping("/add-course")
     public ResponseEntity<String> createCourse(@RequestBody Course course) {
         instructorService.createCourse(course);
-        return ResponseEntity.ok("Course " + course.getTitle() + "Added Successfully");
+        return ResponseEntity.ok("Course " + course.getTitle() + " Added Successfully");
     }
 
-    @PutMapping("/update-course/{id}")
-    public ResponseEntity<String> updateCourse(@PathVariable Long id, @RequestBody Course course) {
-        instructorService.updateCourse(id, course);
-        return ResponseEntity.ok("Course updated successfully");
-    }
 
+    // Add Lesson
     @PostMapping("/add-lesson")
     public ResponseEntity<String> addLesson(@RequestBody Lesson lesson) {
-        try{
-        Long instructorId = getAuthenticatedInstructorId();
-        instructorService.addLesson(instructorId, lesson);
-        return ResponseEntity.ok("Lesson added successfully");
-    } catch (PermissionDeniedException e) {
-        // Return a 403 Forbidden response with the custom error message
-        return ResponseEntity.status(403).body(e.getMessage());
-    } catch (Exception e) {
-        // Handle any other exceptions with a generic error message
-        return ResponseEntity.status(500).body("You do not have permission to add lessons to this course.");
-    }
+        try {
+            Long instructorId = getAuthenticatedInstructorId();
+            instructorService.addLesson(instructorId, lesson);
+            return ResponseEntity.ok("Lesson added successfully");
+        } catch (PermissionDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("You do not have permission to add lessons to this course.");
+        }
     }
 
-
+    // Remove Lesson
     @DeleteMapping("/remove-lesson")
     public ResponseEntity<String> removeLesson(@RequestBody Lesson lesson) {
-        instructorService.removeLesson(lesson);
-        return ResponseEntity.ok("Lesson deleted successfully");
+        try {
+            Long instructorId = getAuthenticatedInstructorId();
+            instructorService.removeLesson(instructorId, lesson);
+            return ResponseEntity.ok("Lesson deleted successfully");
+        } catch (PermissionDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("You do not have permission to remove this lesson.");
+        }
     }
 
-
-        @PostMapping("/add-assignment")
-        public ResponseEntity<String> addAssignment(@RequestBody Assignment assignment) {
-            try {
-                Long instructorId = getAuthenticatedInstructorId(); // Get the authenticated instructor ID
-                instructorService.addAssignment(instructorId, assignment);
-                return ResponseEntity.ok("Assignment added successfully");
-            } catch (PermissionDeniedException e) {
-                // Return a 403 Forbidden response with the custom error message
-                return ResponseEntity.status(403).body(e.getMessage());
-            } catch (Exception e) {
-                // Handle any other exceptions with a generic error message
-                return ResponseEntity.status(500).body("You do not have permission to add Assignments to this course.");
-            }
+    // Add Assignment
+    @PostMapping("/add-assignment")
+    public ResponseEntity<String> addAssignment(@RequestBody Assignment assignment) {
+        try {
+            Long instructorId = getAuthenticatedInstructorId();
+            instructorService.addAssignment(instructorId, assignment);
+            return ResponseEntity.ok("Assignment added successfully");
+        } catch (PermissionDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("You do not have permission to add assignments to this course.");
         }
+    }
 
-        // Mock method to simulate fetching authenticated instructor ID
-        private Long getAuthenticatedInstructorId() {
-            return 1L; // Example ID
-        }
-
-
-
-    @PostMapping("/remove-assignment")
+    // Remove Assignment
+    @DeleteMapping("/remove-assignment")
     public ResponseEntity<String> removeAssignment(@RequestBody Assignment assignment) {
-        instructorService.removeAssignment(assignment);
-        return ResponseEntity.ok("Assignment deleted successfully");
+        try {
+            Long instructorId = getAuthenticatedInstructorId();
+            instructorService.removeAssignment(instructorId, assignment);
+            return ResponseEntity.ok("Assignment deleted successfully");
+        } catch (PermissionDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("You do not have permission to remove this assignment.");
+        }
     }
 
+    // Add Grade
     @PostMapping("/add-grade")
     public ResponseEntity<String> addGrade(@RequestBody Grade grade) {
         try {
-        Long instructorId = getAuthenticatedInstructorId();
-        instructorService.addGrade(instructorId, grade);
-        return ResponseEntity.ok("Grade added successfully");
-    } catch (PermissionDeniedException e) {
-        // Return a 403 Forbidden response with the custom error message
-        return ResponseEntity.status(403).body(e.getMessage());
-    } catch (Exception e) {
-        // Handle any other exceptions with a generic error message
-        return ResponseEntity.status(500).body("You do not have permission to add grades to this course.");
-    }
+            Long instructorId = getAuthenticatedInstructorId();
+            instructorService.addGrade(instructorId, grade);
+            return ResponseEntity.ok("Grade added successfully");
+        } catch (PermissionDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("You do not have permission to add grades to this course.");
+        }
     }
 
-
-    @PostMapping("/remove-grade")
+    // Remove Grade
+    @DeleteMapping("/remove-grade")
     public ResponseEntity<String> removeGrade(@RequestBody Grade grade) {
-        instructorService.removeGrade(grade);
-        return ResponseEntity.ok("Grade deleted successfully");
+        try {
+            Long instructorId = getAuthenticatedInstructorId();
+            instructorService.removeGrade(instructorId, grade);
+            return ResponseEntity.ok("Grade deleted successfully");
+        } catch (PermissionDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("You do not have permission to remove this grade.");
+        }
     }
 
+    // Mock method to simulate fetching authenticated instructor ID
+    private Long getAuthenticatedInstructorId() {
+        return 1L; // Example ID
+    }
 }
-
