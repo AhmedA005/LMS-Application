@@ -3,6 +3,8 @@ package com.example.LMS.UserManagement.Student;
 import com.example.LMS.CourseManagement.Course.Course;
 import com.example.LMS.CourseManagement.Enrollment.Enrollment;
 import com.example.LMS.CourseManagement.Enrollment.EnrollmentRepository;
+import com.example.LMS.CourseManagement.Grade.Grade;
+import com.example.LMS.CourseManagement.Grade.GradeRepository;
 import com.example.LMS.CourseManagement.Lesson.Lesson;
 import com.example.LMS.CourseManagement.Lesson.LessonRepository;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ public class StudentService {
     private final StudentRepository studentRepository;
     private final EnrollmentRepository enrollmentRepository;
     private final LessonRepository lessonRepository;
+    private final GradeRepository gradeRepository;
 
     public String enrollInCourse(Course course, Student student) {
         Enrollment enrollment = new Enrollment(null, course, student);
@@ -45,5 +48,14 @@ public class StudentService {
                 .map(Enrollment::getCourse)
                 .toList();
     }
+
+    public List<Grade> getGrades(Long studentId) {
+        return gradeRepository.findAll()
+                .stream()
+                .filter(grade -> grade.getStudentId().equals(studentId))
+                .toList();
+    }
+
+
 }
 

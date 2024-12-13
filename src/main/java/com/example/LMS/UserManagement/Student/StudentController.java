@@ -2,6 +2,7 @@ package com.example.LMS.UserManagement.Student;
 
 import com.example.LMS.CourseManagement.Course.Course;
 import com.example.LMS.CourseManagement.Enrollment.EnrollmentRequest;
+import com.example.LMS.CourseManagement.Grade.Grade;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,5 +35,14 @@ public class StudentController {
         List<Course> courses = studentService.getEnrolledCourses(studentId);
         return ResponseEntity.ok(courses);
     }
+
+    @GetMapping("/{studentId}/grades")
+    public ResponseEntity<List<Grade>> getGrades(@PathVariable Long studentId) {
+        List<Grade> grades = studentService.getGrades(studentId);
+        return ResponseEntity.ok(grades);
+    }
+
+
+
 }
 

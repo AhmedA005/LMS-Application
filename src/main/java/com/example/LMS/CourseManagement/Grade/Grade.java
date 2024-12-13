@@ -12,11 +12,10 @@ public class Grade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    //@JoinColumn(name = "student_id" , nullable = false)
+    @JoinColumn(name = "student_id" , nullable = false)
     private Long studentId;
-    @ManyToOne
     @JoinColumn(name = "course_id", nullable = false) // Maps to the course's primary key
-    private Course course; // Each grade is associated with one course
+    private Long courseId; // Each grade is associated with one course
     //Can be enrollmentId
     private String title;
     private Long grade;
