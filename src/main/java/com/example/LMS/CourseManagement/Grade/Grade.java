@@ -12,6 +12,7 @@ public class Grade {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    //@JoinColumn(name = "student_id" , nullable = false)
     private Long studentId;
     @ManyToOne
     @JoinColumn(name = "course_id", nullable = false) // Maps to the course's primary key
