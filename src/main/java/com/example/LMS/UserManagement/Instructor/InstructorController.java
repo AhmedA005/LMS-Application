@@ -5,11 +5,13 @@ import com.example.LMS.CourseManagement.Course.Course;
 import com.example.LMS.CourseManagement.Grade.Grade;
 import com.example.LMS.CourseManagement.Lesson.Lesson;
 import com.example.LMS.PermissionDeniedException;
+import com.example.LMS.UserManagement.Student.Student;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 @RestController
 @RequestMapping("/instructor")
 @RequiredArgsConstructor
@@ -111,5 +113,11 @@ public class InstructorController {
     // Mock method to simulate fetching authenticated instructor ID
     private Long getAuthenticatedInstructorId() {
         return 1L; // Example ID
+    }
+
+    @GetMapping("/{courseId}/students")
+    public ResponseEntity<List<Student>> getEnrolledStudents(@PathVariable Long courseId) {
+        List<Student> students = instructorService.getEnrolledStudents(courseId);
+        return ResponseEntity.ok(students);
     }
 }

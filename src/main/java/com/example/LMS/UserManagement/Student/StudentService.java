@@ -37,5 +37,13 @@ public class StudentService {
     public List<Student> getAllStudents() {
         return studentRepository.findAll();
     }
+
+    public List<Course> getEnrolledCourses(Long studentId) {
+        return enrollmentRepository.findAll()
+                .stream()
+                .filter(enrollment -> enrollment.getStudent().getId().equals(studentId))
+                .map(Enrollment::getCourse)
+                .toList();
+    }
 }
 

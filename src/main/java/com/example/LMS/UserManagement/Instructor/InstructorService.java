@@ -4,11 +4,14 @@ import com.example.LMS.CourseManagement.Assignment.Assignment;
 import com.example.LMS.CourseManagement.Assignment.AssignmentRepository;
 import com.example.LMS.CourseManagement.Course.Course;
 import com.example.LMS.CourseManagement.Course.CourseRepository;
+import com.example.LMS.CourseManagement.Enrollment.Enrollment;
+import com.example.LMS.CourseManagement.Enrollment.EnrollmentRepository;
 import com.example.LMS.CourseManagement.Grade.Grade;
 import com.example.LMS.CourseManagement.Grade.GradeRepository;
 import com.example.LMS.CourseManagement.Lesson.Lesson;
 import com.example.LMS.CourseManagement.Lesson.LessonRepository;
 import com.example.LMS.PermissionDeniedException;
+import com.example.LMS.UserManagement.Student.Student;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -22,6 +25,7 @@ public class InstructorService {
     private final LessonRepository lessonRepository;
     private final AssignmentRepository assignmentRepository;
     private final GradeRepository gradeRepository;
+    private final EnrollmentRepository enrollmentRepository;
 
     public Course createCourse(Course course) {
         return courseRepository.save(course);
@@ -117,5 +121,13 @@ public class InstructorService {
 
     public List<Instructor> getAllInstructors() {
         return instructorRepository.findAll();
+    }
+
+    public List<Student> getEnrolledStudents(Long courseId) {
+        return enrollmentRepository.findAll()
+                .stream()
+                .filter(enrollment -> enrollment.getCourse().getId().equals(courseId))
+                .map(Enrollment::getStudent)
+                .toList();
     }
 }

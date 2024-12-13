@@ -6,6 +6,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/student")
 @RequiredArgsConstructor
@@ -25,6 +27,12 @@ public class StudentController {
     public ResponseEntity<String> markAttendance(@PathVariable Long lessonId, @RequestParam String otp) {
         String message = studentService.markAttendance(lessonId, otp);
         return ResponseEntity.ok(message);
+    }
+
+    @GetMapping("/{studentId}/courses")
+    public ResponseEntity<List<Course>> getEnrolledCourses(@PathVariable Long studentId) {
+        List<Course> courses = studentService.getEnrolledCourses(studentId);
+        return ResponseEntity.ok(courses);
     }
 }
 

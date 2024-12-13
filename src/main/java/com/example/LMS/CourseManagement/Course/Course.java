@@ -35,4 +35,7 @@ public class Course {
     @JsonManagedReference
     private List<Assignment> assignments;
 
+    public Course(Long courseId) {
+        this.id = courseId;
+    }
 }

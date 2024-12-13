@@ -62,5 +62,11 @@ public class AdminController {
         adminService.removeCourse(course);
         return ResponseEntity.ok("Course " + course.getTitle() + " deleted successfully");
     }
+
+    @GetMapping("/{courseId}/students")
+    public ResponseEntity<List<Student>> getEnrolledStudents(@PathVariable Long courseId) {
+        List<Student> students = adminService.getEnrolledStudents(courseId);
+        return ResponseEntity.ok(students);
+    }
 }
 
