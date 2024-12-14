@@ -10,6 +10,7 @@ import com.example.LMS.CourseManagement.Lesson.LessonRepository;
 import com.example.LMS.PerformanceTracking.Attendance;
 import com.example.LMS.PerformanceTracking.AttendanceRepository;
 import com.example.LMS.PermissionDeniedException;
+import com.example.LMS.notificationsystem.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -23,10 +24,21 @@ public class StudentService {
     private final LessonRepository lessonRepository;
     private final AssignmentGradeRepository gradeRepository;
     private final AttendanceRepository attendanceRepository;
-
+    private final NotificationService notificationService;
+    public Student findById(Long studentId) {
+        return studentRepository.findById(studentId)
+                .orElseThrow(() -> new IllegalArgumentException("Student not found with ID: " + studentId));
+    }
     public String enrollInCourse(Course course, Student student) {
         Enrollment enrollment = new Enrollment(null, course, student);
         enrollmentRepository.save(enrollment);
+
+        // Send notification to the student
+        notificationService.sendNotificationToStudent(
+                "You have been successfully enrolled in the course: " + course.getTitle(),
+                student
+        );
+
         return "Enrolled successfully!";
     }
 
