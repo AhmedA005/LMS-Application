@@ -12,6 +12,7 @@ import com.example.LMS.CourseManagement.Lesson.Lesson;
 import com.example.LMS.CourseManagement.Lesson.LessonRepository;
 import com.example.LMS.PermissionDeniedException;
 import com.example.LMS.UserManagement.Student.Student;
+import com.example.LMS.notificationsystem.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -26,7 +27,7 @@ public class InstructorService {
     private final AssignmentRepository assignmentRepository;
     private final AssignmentGradeRepository AssignmentGradeRepository;
     private final EnrollmentRepository enrollmentRepository;
-
+   private final NotificationService notificationService;
     public Course createCourse(Course course) {
         return courseRepository.save(course);
     }
@@ -39,6 +40,11 @@ public class InstructorService {
             otp.append(numbers.charAt(index));
         }
         return otp.toString();
+    }
+    public Instructor findById(Long instructorId) {
+        // Use the repository to fetch the instructor, or throw an exception if not found
+        return instructorRepository.findById(instructorId)
+                .orElseThrow(() -> new IllegalArgumentException("Instructor not found with ID: " + instructorId));
     }
 
     // Add Lesson
@@ -55,6 +61,13 @@ public class InstructorService {
         lesson.setOtp(generateOTP());
         lesson.setCourse(course);
         lessonRepository.save(lesson);
+        List<Enrollment> enrollments = enrollmentRepository.findByCourse(course);
+        for (Enrollment enrollment : enrollments) {
+            notificationService.sendNotificationToStudent(
+                    "A new lesson has been added to your course: " + course.getTitle(),
+                    enrollment.getStudent()
+            );
+        }
     }
 
     // Remove Lesson
