@@ -2,7 +2,7 @@ package com.example.LMS.UserManagement.Instructor;
 
 import com.example.LMS.CourseManagement.Assignment.Assignment;
 import com.example.LMS.CourseManagement.Course.Course;
-import com.example.LMS.CourseManagement.Grade.Grade;
+import com.example.LMS.CourseManagement.Grade.AssignmentGrade;
 import com.example.LMS.CourseManagement.Lesson.Lesson;
 import com.example.LMS.PermissionDeniedException;
 import com.example.LMS.UserManagement.Student.Student;
@@ -27,10 +27,9 @@ public class InstructorController {
 
 
     // Add Lesson
-    @PostMapping("/add-lesson")
-    public ResponseEntity<String> addLesson(@RequestBody Lesson lesson) {
+    @PostMapping("/{instructorId}/add-lesson")
+    public ResponseEntity<String> addLesson(@PathVariable Long instructorId,@RequestBody Lesson lesson) {
         try {
-            Long instructorId = getAuthenticatedInstructorId();
             instructorService.addLesson(instructorId, lesson);
             return ResponseEntity.ok("Lesson added successfully");
         } catch (PermissionDeniedException e) {
@@ -41,10 +40,9 @@ public class InstructorController {
     }
 
     // Remove Lesson
-    @DeleteMapping("/remove-lesson")
-    public ResponseEntity<String> removeLesson(@RequestBody Lesson lesson) {
+    @DeleteMapping("/{instructorId}/remove-lesson")
+    public ResponseEntity<String> removeLesson(@PathVariable Long instructorId,@RequestBody Lesson lesson) {
         try {
-            Long instructorId = getAuthenticatedInstructorId();
             instructorService.removeLesson(instructorId, lesson);
             return ResponseEntity.ok("Lesson deleted successfully");
         } catch (PermissionDeniedException e) {
@@ -55,10 +53,9 @@ public class InstructorController {
     }
 
     // Add Assignment
-    @PostMapping("/add-assignment")
-    public ResponseEntity<String> addAssignment(@RequestBody Assignment assignment) {
+    @PostMapping("/{instructorId}/add-assignment")
+    public ResponseEntity<String> addAssignment(@PathVariable Long instructorId,@RequestBody Assignment assignment) {
         try {
-            Long instructorId = getAuthenticatedInstructorId();
             instructorService.addAssignment(instructorId, assignment);
             return ResponseEntity.ok("Assignment added successfully");
         } catch (PermissionDeniedException e) {
@@ -69,10 +66,9 @@ public class InstructorController {
     }
 
     // Remove Assignment
-    @DeleteMapping("/remove-assignment")
-    public ResponseEntity<String> removeAssignment(@RequestBody Assignment assignment) {
+    @DeleteMapping("/{instructorId}/remove-assignment")
+    public ResponseEntity<String> removeAssignment(@PathVariable Long instructorId,@RequestBody Assignment assignment) {
         try {
-            Long instructorId = getAuthenticatedInstructorId();
             instructorService.removeAssignment(instructorId, assignment);
             return ResponseEntity.ok("Assignment deleted successfully");
         } catch (PermissionDeniedException e) {
@@ -83,11 +79,10 @@ public class InstructorController {
     }
 
     // Add Grade
-    @PostMapping("/add-grade")
-    public ResponseEntity<String> addGrade(@RequestBody Grade grade) {
+    @PostMapping("/{instructorId}/add-assignment-grade")
+    public ResponseEntity<String> addGrade(@PathVariable Long instructorId,@RequestBody AssignmentGrade grade) {
         try {
-            Long instructorId = getAuthenticatedInstructorId();
-            instructorService.addGrade(instructorId, grade);
+            instructorService.addAssignmentGrade(instructorId, grade);
             return ResponseEntity.ok("Grade added successfully");
         } catch (PermissionDeniedException e) {
             return ResponseEntity.status(403).body(e.getMessage());
@@ -96,19 +91,6 @@ public class InstructorController {
         }
     }
 
-    // Remove Grade
-    @DeleteMapping("/remove-grade")
-    public ResponseEntity<String> removeGrade(@RequestBody Grade grade) {
-        try {
-            Long instructorId = getAuthenticatedInstructorId();
-            instructorService.removeGrade(instructorId, grade);
-            return ResponseEntity.ok("Grade deleted successfully");
-        } catch (PermissionDeniedException e) {
-            return ResponseEntity.status(403).body(e.getMessage());
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("You do not have permission to remove this grade.");
-        }
-    }
 
     // Mock method to simulate fetching authenticated instructor ID
     private Long getAuthenticatedInstructorId() {
@@ -121,12 +103,12 @@ public class InstructorController {
         return ResponseEntity.ok(students);
     }
 
-    @DeleteMapping("/remove-student/{courseId}/{studentId}")
+    @DeleteMapping("/{instructorId}/remove-student/{courseId}/{studentId}")
     public ResponseEntity<String> removeStudentFromCourse(
+            @PathVariable Long instructorId,
             @PathVariable Long courseId,
             @PathVariable Long studentId) {
         try {
-            Long instructorId = getAuthenticatedInstructorId();
             instructorService.removeStudentFromCourse(instructorId, courseId, studentId);
             return ResponseEntity.ok("Student removed from course successfully");
         } catch (PermissionDeniedException e) {

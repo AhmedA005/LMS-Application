@@ -5,6 +5,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface GradeRepository extends JpaRepository<Grade, Long> {
-    List<Grade> findByStudentId(Long studentId);
+public interface AssignmentGradeRepository extends JpaRepository<AssignmentGrade, Long> {
+    List<AssignmentGrade> findByStudentId(Long studentId);
 }

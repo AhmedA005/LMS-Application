@@ -1,6 +1,5 @@
 package com.example.LMS.UserManagement.Student;
 
-import com.example.LMS.CourseManagement.Grade.Grade;
 import com.example.LMS.UserManagement.Role;
 import com.example.LMS.UserManagement.User;
 import jakarta.persistence.CascadeType;

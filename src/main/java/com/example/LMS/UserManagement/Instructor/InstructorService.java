@@ -6,8 +6,8 @@ import com.example.LMS.CourseManagement.Course.Course;
 import com.example.LMS.CourseManagement.Course.CourseRepository;
 import com.example.LMS.CourseManagement.Enrollment.Enrollment;
 import com.example.LMS.CourseManagement.Enrollment.EnrollmentRepository;
-import com.example.LMS.CourseManagement.Grade.Grade;
-import com.example.LMS.CourseManagement.Grade.GradeRepository;
+import com.example.LMS.CourseManagement.Grade.AssignmentGrade;
+import com.example.LMS.CourseManagement.Grade.AssignmentGradeRepository;
 import com.example.LMS.CourseManagement.Lesson.Lesson;
 import com.example.LMS.CourseManagement.Lesson.LessonRepository;
 import com.example.LMS.PermissionDeniedException;
@@ -24,14 +24,22 @@ public class InstructorService {
     private final CourseRepository courseRepository;
     private final LessonRepository lessonRepository;
     private final AssignmentRepository assignmentRepository;
-    private final GradeRepository gradeRepository;
+    private final AssignmentGradeRepository AssignmentGradeRepository;
     private final EnrollmentRepository enrollmentRepository;
 
     public Course createCourse(Course course) {
         return courseRepository.save(course);
     }
 
-
+    private String generateOTP(){
+        String numbers = "0123456789";
+        StringBuilder otp = new StringBuilder();
+        for (int i = 0; i < 4; i++) {
+            int index = (int) (Math.random() * numbers.length());
+            otp.append(numbers.charAt(index));
+        }
+        return otp.toString();
+    }
 
     // Add Lesson
     public void addLesson(Long instructorId, Lesson lesson) {
@@ -44,7 +52,7 @@ public class InstructorService {
         if (!course.getInstructor().getId().equals(instructorId)) {
             throw new PermissionDeniedException("Instructor does not have permission to add lessons to this course.");
         }
-
+        lesson.setOtp(generateOTP());
         lesson.setCourse(course);
         lessonRepository.save(lesson);
     }
@@ -118,38 +126,42 @@ public class InstructorService {
 //        gradeRepository.delete(grade);
 //    }
 
-    public void addGrade(Long instructorId, Grade grade) {
+    public void addAssignmentGrade(Long instructorId, AssignmentGrade grade) {
         // Fetch the instructor
         Instructor instructor = instructorRepository.findById(instructorId)
                 .orElseThrow(() -> new IllegalArgumentException("Instructor not found"));
 
-        // Validate the courseId
-        Course course = courseRepository.findById(grade.getCourseId())
-                .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+        // Fetch the assignment
+        Assignment assignment = assignmentRepository.findById(grade.getAssignmentId())
+                .orElseThrow(() -> new IllegalArgumentException("Assignment not found"));
+
+        // Fetch the course associated with the assignment
+        Course course = assignment.getCourse();
 
         // Ensure the instructor owns the course
         if (!course.getInstructor().getId().equals(instructorId)) {
             throw new PermissionDeniedException("Instructor does not have permission to add grades to this course.");
         }
-
-        // Save the grade (course is linked via courseId, no additional linking needed)
-        gradeRepository.save(grade);
+        grade.setTitle(assignment.getTitle() + " grade");
+        // Save the grade
+        AssignmentGradeRepository.save(grade);
     }
 
 
-    public void removeGrade(Long instructorId, Grade grade) {
-        // Validate the courseId
-        Course course = courseRepository.findById(grade.getCourseId())
-                .orElseThrow(() -> new IllegalArgumentException("Course not found"));
 
-        // Ensure the instructor owns the course
-        if (!course.getInstructor().getId().equals(instructorId)) {
-            throw new PermissionDeniedException("Instructor does not have permission to remove grades from this course.");
-        }
-
-        // Remove the grade
-        gradeRepository.delete(grade);
-    }
+//    public void removeGrade(Long instructorId, AssignmentGrade grade) {
+//        // Validate the courseId
+//        Course course = courseRepository.findById(grade.getCourseId())
+//                .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+//
+//        // Ensure the instructor owns the course
+//        if (!course.getInstructor().getId().equals(instructorId)) {
+//            throw new PermissionDeniedException("Instructor does not have permission to remove grades from this course.");
+//        }
+//
+//        // Remove the grade
+//        AssignmentGradeRepository.delete(grade);
+//    }
 
 
 

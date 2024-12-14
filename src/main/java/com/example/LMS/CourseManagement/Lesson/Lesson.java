@@ -5,6 +5,7 @@ import com.example.LMS.CourseManagement.Course.Course;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
+import org.antlr.v4.runtime.misc.NotNull;
 
 @Entity
 @NoArgsConstructor
@@ -20,6 +21,7 @@ public class Lesson {
     @JsonBackReference
     private Course course; // Each lesson belongs to one course
     private String title;
+    @Column(nullable = false)
     private String otp; // OTP for attendance
 
 //    @ManyToOne
