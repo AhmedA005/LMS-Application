@@ -39,4 +39,8 @@ public class Quiz {
     public void setCourse(Object course) {
         this.course = (Course) course;
     }
+
+    public void setId(long l) {
+        id=l;
+    }
 }
