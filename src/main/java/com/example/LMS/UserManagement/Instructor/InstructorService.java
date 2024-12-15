@@ -12,7 +12,7 @@ import com.example.LMS.CourseManagement.Lesson.Lesson;
 import com.example.LMS.CourseManagement.Lesson.LessonRepository;
 import com.example.LMS.PermissionDeniedException;
 import com.example.LMS.UserManagement.Student.Student;
-import com.example.LMS.notificationsystem.NotificationService;
+import com.example.LMS.notificationsystemTests.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

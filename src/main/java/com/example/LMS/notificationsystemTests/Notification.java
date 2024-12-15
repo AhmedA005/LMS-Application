@@ -1,10 +1,8 @@
-package com.example.LMS.notificationsystem;
+package com.example.LMS.notificationsystemTests;
 import com.example.LMS.UserManagement.Instructor.Instructor;
 import com.example.LMS.UserManagement.Student.Student;
 import jakarta.persistence.*;
-import com.example.LMS.UserManagement.User;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 @Entity

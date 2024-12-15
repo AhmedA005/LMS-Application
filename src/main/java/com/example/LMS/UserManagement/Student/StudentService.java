@@ -10,7 +10,7 @@ import com.example.LMS.CourseManagement.Lesson.LessonRepository;
 import com.example.LMS.PerformanceTracking.Attendance;
 import com.example.LMS.PerformanceTracking.AttendanceRepository;
 import com.example.LMS.PermissionDeniedException;
-import com.example.LMS.notificationsystem.NotificationService;
+import com.example.LMS.notificationsystemTests.NotificationService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
