@@ -103,6 +103,7 @@ public class StudentService {
         Optional<Quiz> quiz = quizRepository.findById(quizId);
         int i=0;
         for(Question question : quiz.get().getQuestions()){
+
         }
     }
 
