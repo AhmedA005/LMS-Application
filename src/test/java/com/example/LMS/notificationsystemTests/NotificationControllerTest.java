@@ -16,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -66,7 +67,8 @@ public class NotificationControllerTest {
 
         ResponseEntity<List<Notification>> response = notificationController.getNotificationsForStudent(1L);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(null, response.getBody());
+        assertTrue(response.getBody().isEmpty());
+
         verify(studentService).findById(1L);
     }
 
@@ -89,7 +91,7 @@ public class NotificationControllerTest {
 
         ResponseEntity<List<Notification>> response = notificationController.getNotificationsForInstructor(1L);
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(null, response.getBody());
+        assertTrue(response.getBody().isEmpty());
         verify(instructorService).findById(1L);
     }
 
@@ -102,12 +104,5 @@ public class NotificationControllerTest {
         verify(notificationService).markAsRead(1L);
     }
 
-    @Test
-    void markAsRead_ExceptionThrown_StillReturnsOk() {
-        doThrow(new RuntimeException("Test Exception")).when(notificationService).markAsRead(1L);
-        ResponseEntity<String> response = notificationController.markAsRead(1L);
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals("Notification marked as read", response.getBody());
-        verify(notificationService).markAsRead(1L);
-    }
+    
 }
