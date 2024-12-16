@@ -21,5 +21,10 @@ public class Assignment {
 
     private String title;
     private String description;
+
+    @Override
+    public String toString() {
+        return "title: " + title + "\ndescription: " + description;
+    }
 }
 
