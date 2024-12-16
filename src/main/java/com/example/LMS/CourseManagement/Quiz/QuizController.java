@@ -30,15 +30,15 @@ public class QuizController {
         return quizService.createQuiz(quiz);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Quiz> updateQuiz(@PathVariable Long id, @RequestBody Quiz updatedQuiz) {
-        try {
-            Quiz updated = quizService.updateQuiz(id, updatedQuiz);
-            return ResponseEntity.ok(updated);
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+//    @PutMapping("/{id}")
+//    public ResponseEntity<Quiz> updateQuiz(@PathVariable Long id, @RequestBody Quiz updatedQuiz) {
+//        try {
+//            Quiz updated = quizService.updateQuiz(id, updatedQuiz);
+//            return ResponseEntity.ok(updated);
+//        } catch (RuntimeException e) {
+//            return ResponseEntity.notFound().build();
+//        }
+//    }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteQuiz(@PathVariable Long id) {

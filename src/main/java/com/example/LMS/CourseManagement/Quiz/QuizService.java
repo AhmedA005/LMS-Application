@@ -22,13 +22,7 @@ public class QuizService {
         return quizRepository.save(quiz);
     }
 
-    public Quiz updateQuiz(Long id, Quiz updatedQuiz) {
-        Quiz existingQuiz = quizRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Quiz not found"));
-        existingQuiz.setTitle(updatedQuiz.getTitle());
-        existingQuiz.setCourse(updatedQuiz.getCourse());
-        return quizRepository.save(existingQuiz);
-    }
+
 
     public void deleteQuiz(Long id) {
         quizRepository.deleteById(id);

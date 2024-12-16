@@ -10,13 +10,19 @@ import com.example.LMS.CourseManagement.Grade.AssignmentGrade;
 import com.example.LMS.CourseManagement.Grade.AssignmentGradeRepository;
 import com.example.LMS.CourseManagement.Lesson.Lesson;
 import com.example.LMS.CourseManagement.Lesson.LessonRepository;
+import com.example.LMS.CourseManagement.Question.*;
+import com.example.LMS.CourseManagement.Quiz.Quiz;
+import com.example.LMS.CourseManagement.Quiz.QuizRepository;
 import com.example.LMS.PermissionDeniedException;
 import com.example.LMS.UserManagement.Student.Student;
 import com.example.LMS.notificationsystemTests.NotificationService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.ZoneId;
+import java.util.*;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -27,12 +33,17 @@ public class InstructorService {
     private final AssignmentRepository assignmentRepository;
     private final AssignmentGradeRepository AssignmentGradeRepository;
     private final EnrollmentRepository enrollmentRepository;
-   private final NotificationService notificationService;
+    private final NotificationService notificationService;
+    private final MCQQuestionRepository mcqQuestionRepository;
+    private final TrueFalseQuestionRepository trueFalseQuestionRepository;
+    private final ShortAnswerRepository shortAnswerRepository;
+    private final QuizRepository quizRepository;
+
     public Course createCourse(Course course) {
         return courseRepository.save(course);
     }
 
-    private String generateOTP(){
+    private String generateOTP() {
         String numbers = "0123456789";
         StringBuilder otp = new StringBuilder();
         for (int i = 0; i < 4; i++) {
@@ -41,6 +52,7 @@ public class InstructorService {
         }
         return otp.toString();
     }
+
     public Instructor findById(Long instructorId) {
         // Use the repository to fetch the instructor, or throw an exception if not found
         return instructorRepository.findById(instructorId)
@@ -161,7 +173,6 @@ public class InstructorService {
     }
 
 
-
 //    public void removeGrade(Long instructorId, AssignmentGrade grade) {
 //        // Validate the courseId
 //        Course course = courseRepository.findById(grade.getCourseId())
@@ -175,7 +186,6 @@ public class InstructorService {
 //        // Remove the grade
 //        AssignmentGradeRepository.delete(grade);
 //    }
-
 
 
     public List<Instructor> getAllInstructors() {
@@ -206,6 +216,80 @@ public class InstructorService {
 
         // Remove the enrollment
         enrollmentRepository.delete(enrollment);
+    }
+
+    public void createQuiz(Long courseId, Long instructorId, Quiz.QuizType quizType, int numberOfQuestions) {
+        // Fetch the course based on courseId
+        Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+
+        if (!course.getInstructor().getId().equals(instructorId)) {
+            throw new PermissionDeniedException("Instructor does not have permission to modify this course.");
+        }
+
+        List<Question> questions = null;
+
+        // Based on the quizType, fetch the questions from the appropriate repository
+        if (quizType == Quiz.QuizType.MCQ) {
+            questions = mcqQuestionRepository.findByCourseId(courseId);
+        } else if (quizType == Quiz.QuizType.ShortAnswer) {
+            questions = shortAnswerRepository.findByCourseId(courseId);
+        } else if (quizType == Quiz.QuizType.TrueFalse) {
+            questions = trueFalseQuestionRepository.findByCourseId(courseId);
+        } else {
+            throw new IllegalArgumentException("Invalid quiz type.");
+        }
+
+        Set<Question> questionSet = new HashSet<>();
+
+        // Randomly select questions
+        while (questionSet.size() < numberOfQuestions && !questions.isEmpty()) {
+            int questionNumber = (int) (Math.random() * questions.size());
+            questionSet.add(questions.get(questionNumber));
+        }
+
+        // Convert the Set to a List (if needed)
+        List<Question> finalQuestions = new ArrayList<>(questionSet);
+
+        // Create the quiz and set all properties, including questions
+        Quiz quiz = new Quiz();
+        quiz.setNumberOfQuestions(numberOfQuestions);
+        quiz.setCreatedDate(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
+        quiz.setCourse(course);
+        quiz.setQuizType(quizType);
+        quiz.setQuestions(finalQuestions); // Set the selected questions
+
+        // Save the quiz to the repository
+        quizRepository.save(quiz);
+    }
+
+
+    public void addQuestion(Long instructorId, Question question) {
+        Course course = courseRepository.findById(question.getCourse().getId())
+                .orElseThrow(() -> new IllegalArgumentException("Course not found"));
+
+        // Ensure the instructor owns the course
+        if (!course.getInstructor().getId().equals(instructorId)) {
+            throw new PermissionDeniedException("Instructor does not have permission to modify this course.");
+        }
+        if (question instanceof MCQQuestion) {
+            mcqQuestionRepository.save((MCQQuestion) question);
+
+        } else if (question instanceof TrueFalseQuestion) {
+            trueFalseQuestionRepository.save((TrueFalseQuestion) question);
+        } else if (question instanceof ShortAnswerQuestion) {
+            shortAnswerRepository.save((ShortAnswerQuestion) question);
+        } else {
+            throw new IllegalArgumentException("Invalid question type.");
+        }
+
+    }
+
+    @Transactional
+    public List<Quiz> getAllQuizzes() {
+        List<Quiz> quizzes = quizRepository.findAll();
+        quizzes.forEach(quiz -> quiz.getQuestions().size());  // Force loading the questions
+        return quizzes;
     }
 
 }

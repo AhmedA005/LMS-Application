@@ -1,14 +1,23 @@
 package com.example.LMS.CourseManagement.Quiz;
 
 import com.example.LMS.CourseManagement.Course.Course;
+import com.example.LMS.CourseManagement.Question.Question;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
 import java.util.List;
 
 @Entity
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class Quiz {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -17,30 +26,29 @@ public class Quiz {
     @Getter
     private String title;
     private Date createdDate;
+    private QuizType quizType;
+    private int numberOfQuestions;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "quiz_questions",
+            joinColumns = @JoinColumn(name = "quiz_id"),
+            inverseJoinColumns = @JoinColumn(name = "question_id")
+    )
+    @JsonManagedReference
+    private List<Question> questions;
 
     @ManyToOne
     @JoinColumn(name = "course_id")
+    @JsonBackReference
     private Course course;
 
     @OneToMany(mappedBy = "quiz", cascade = CascadeType.ALL)
     private List<QuizAttempt> attempts;
-    public  Quiz(Long id ){
-        this.id = id;
+
+
+    public enum QuizType {
+        MCQ, TrueFalse, ShortAnswer
     }
 
-    public Quiz() {
-
-    }
-
-    public Object getCourse() {
-        return this.course;
-    }
-
-    public void setCourse(Object course) {
-        this.course = (Course) course;
-    }
-
-    public void setId(long l) {
-        id=l;
-    }
 }
