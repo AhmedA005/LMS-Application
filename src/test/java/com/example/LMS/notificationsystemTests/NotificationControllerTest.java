@@ -104,5 +104,5 @@ public class NotificationControllerTest {
         verify(notificationService).markAsRead(1L);
     }
 
-    
+
 }
