@@ -22,8 +22,8 @@ public class QuizAttempt {
     @JoinColumn(name = "student_id")
     private Student student;
 
-    @ElementCollection
-    private List<Long> selectedQuestionIds; // Stores IDs of randomly selected questions
+//    @ElementCollection
+//    private List<Long> selectedQuestionIds; // Stores IDs of randomly selected questions
     @ElementCollection
     private List<String> studentAnswers; // Stores student answers
 

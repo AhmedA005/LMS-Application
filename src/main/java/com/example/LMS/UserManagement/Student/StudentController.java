@@ -3,12 +3,14 @@ package com.example.LMS.UserManagement.Student;
 import com.example.LMS.CourseManagement.Course.Course;
 import com.example.LMS.CourseManagement.Enrollment.EnrollmentRequest;
 import com.example.LMS.CourseManagement.Grade.AssignmentGrade;
+import com.example.LMS.CourseManagement.Quiz.Quiz;
 import com.example.LMS.PermissionDeniedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/student")
@@ -51,7 +53,21 @@ public class StudentController {
         return ResponseEntity.ok(grades);
     }
 
+    @GetMapping("get-quiz")
+    public ResponseEntity<String> getQuiz(Long quizId) {
+        Optional<Quiz> quiz = studentService.getQuiz(quizId);
+        String quiz1 = quiz.toString();
+        String print="";
+        for (int i=9;i<quiz1.length()-1;i++){
+            print+= quiz1.charAt(i);
+        }
+        return ResponseEntity.ok(print);
+    }
 
+    @PostMapping("/{studentId}/take-quiz")
+    public ResponseEntity<String> takeQuiz(@PathVariable Long studentId, @RequestParam Long quizId, @RequestBody List<String> answers) {
+        studentService.takeQuiz(studentId, quizId, answers);
+    }
 
 }
 

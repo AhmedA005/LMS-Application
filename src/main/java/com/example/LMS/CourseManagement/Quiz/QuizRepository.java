@@ -9,4 +9,5 @@ import java.util.List;
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
     // Find all quizzes associated with a specific course
     List<Quiz> findByCourseId(Long courseId);
+    Quiz findById(long id);
 }

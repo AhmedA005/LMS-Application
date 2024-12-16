@@ -7,6 +7,9 @@ import com.example.LMS.CourseManagement.Grade.AssignmentGrade;
 import com.example.LMS.CourseManagement.Grade.AssignmentGradeRepository;
 import com.example.LMS.CourseManagement.Lesson.Lesson;
 import com.example.LMS.CourseManagement.Lesson.LessonRepository;
+import com.example.LMS.CourseManagement.Question.Question;
+import com.example.LMS.CourseManagement.Quiz.Quiz;
+import com.example.LMS.CourseManagement.Quiz.QuizRepository;
 import com.example.LMS.PerformanceTracking.Attendance;
 import com.example.LMS.PerformanceTracking.AttendanceRepository;
 import com.example.LMS.PermissionDeniedException;
@@ -15,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -25,6 +29,7 @@ public class StudentService {
     private final AssignmentGradeRepository gradeRepository;
     private final AttendanceRepository attendanceRepository;
     private final NotificationService notificationService;
+    private final QuizRepository quizRepository;
     public Student findById(Long studentId) {
         return studentRepository.findById(studentId)
                 .orElseThrow(() -> new IllegalArgumentException("Student not found with ID: " + studentId));
@@ -88,6 +93,17 @@ public class StudentService {
                 .stream()
                 .filter(grade -> grade.getStudentId().equals(studentId))
                 .toList();
+    }
+
+    public Optional<Quiz> getQuiz(Long quizId) {
+        return quizRepository.findById(quizId);
+    }
+
+    public void takeQuiz(Long studentId, Long quizId, List<String>answers) {
+        Optional<Quiz> quiz = quizRepository.findById(quizId);
+        int i=0;
+        for(Question question : quiz.get().getQuestions()){
+        }
     }
 
 
