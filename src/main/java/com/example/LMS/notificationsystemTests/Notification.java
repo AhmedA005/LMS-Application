@@ -1,10 +1,9 @@
-package com.example.LMS.notificationsystem;
+package com.example.LMS.notificationsystemTests;
 import com.example.LMS.UserManagement.Instructor.Instructor;
 import com.example.LMS.UserManagement.Student.Student;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
-import com.example.LMS.UserManagement.User;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 @Entity
@@ -20,9 +19,11 @@ public class Notification {
     private LocalDateTime timestamp;
 
     @ManyToOne
+    @JsonBackReference
     private Student student;
 
     @ManyToOne
+    @JsonBackReference
     private Instructor instructor;
 
     private boolean isRead;

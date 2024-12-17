@@ -1,14 +1,17 @@
 package com.example.LMS.UserManagement.Student;
 
+import com.example.LMS.CourseManagement.Assignment.Assignment;
 import com.example.LMS.CourseManagement.Course.Course;
 import com.example.LMS.CourseManagement.Enrollment.EnrollmentRequest;
 import com.example.LMS.CourseManagement.Grade.AssignmentGrade;
+import com.example.LMS.CourseManagement.Quiz.Quiz;
 import com.example.LMS.PermissionDeniedException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/student")
@@ -49,6 +52,64 @@ public class StudentController {
     public ResponseEntity<List<AssignmentGrade>> getGrades(@PathVariable Long studentId) {
         List<AssignmentGrade> grades = studentService.getAssignmentGrades(studentId);
         return ResponseEntity.ok(grades);
+    }
+
+    @GetMapping("/{studentId}/get-quiz")
+    public ResponseEntity<String> getQuiz(Long quizId, @PathVariable Long studentId) {
+        try {
+            Quiz quiz = studentService.getQuiz(quizId, studentId).get();
+            return ResponseEntity.ok(quiz.toString());
+        }
+        catch (IllegalArgumentException e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
+        catch (PermissionDeniedException e){
+            return ResponseEntity.ok(e.getMessage());
+        }
+
+    }
+
+    @PostMapping("/{studentId}/take-quiz")
+    public ResponseEntity<String> takeQuiz(@PathVariable Long studentId, @RequestParam Long quizId, @RequestBody List<String> answers) {
+        try {
+            String message = studentService.takeQuiz(studentId, quizId, answers);
+            return ResponseEntity.ok(message);
+        }
+        catch (IllegalArgumentException e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
+        catch (PermissionDeniedException e){
+            return ResponseEntity.ok(e.getMessage());
+        }
+    }
+
+    @GetMapping("/{studentId}/get-assignment")
+    public ResponseEntity<String> getAssignment(@RequestParam Long assignmentId, @PathVariable Long studentId) {
+        try {
+            Assignment assignment = studentService.getAssignment(assignmentId, studentId);
+            return ResponseEntity.ok(assignment.toString());
+        }
+        catch (IllegalArgumentException e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
+        catch (PermissionDeniedException e){
+            return ResponseEntity.ok(e.getMessage());
+        }
+
+    }
+
+    @PostMapping("/{studentId}/submit-assignment")
+    public ResponseEntity<String> submitAssignment(@PathVariable Long studentId, @RequestParam Long assignmentId, @RequestBody String answer) {
+        try {
+            String message = studentService.submitAssignment(studentId, assignmentId, answer);
+            return ResponseEntity.ok(message);
+        }
+        catch (IllegalArgumentException e) {
+            return ResponseEntity.status(500).body(e.getMessage());
+        }
+        catch (PermissionDeniedException e){
+            return ResponseEntity.ok(e.getMessage());
+        }
     }
 
 

@@ -1,4 +1,4 @@
-package com.example.LMS.notificationsystem;
+package com.example.LMS.notificationsystemTests;
 
 import com.example.LMS.UserManagement.Instructor.Instructor;
 import com.example.LMS.UserManagement.Student.Student;
@@ -23,11 +23,13 @@ public class NotificationService {
     }
 
     public List<Notification> getNotificationsForStudent(Student student) {
-        return notificationRepository.findByStudent(student);
+        List<Notification> notifications = notificationRepository.findByStudent(student);
+        return notifications.isEmpty() ? null : notifications;
     }
 
     public List<Notification> getNotificationsForInstructor(Instructor instructor) {
-        return notificationRepository.findByInstructor(instructor);
+        List<Notification> notifications = notificationRepository.findByInstructor(instructor);
+        return notifications.isEmpty() ? null : notifications;
     }
 
     public void markAsRead(Long notificationId) {

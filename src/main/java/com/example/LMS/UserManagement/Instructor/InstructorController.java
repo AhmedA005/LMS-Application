@@ -4,6 +4,8 @@ import com.example.LMS.CourseManagement.Assignment.Assignment;
 import com.example.LMS.CourseManagement.Course.Course;
 import com.example.LMS.CourseManagement.Grade.AssignmentGrade;
 import com.example.LMS.CourseManagement.Lesson.Lesson;
+import com.example.LMS.CourseManagement.Question.Question;
+import com.example.LMS.CourseManagement.Quiz.Quiz;
 import com.example.LMS.PermissionDeniedException;
 import com.example.LMS.UserManagement.Student.Student;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +30,7 @@ public class InstructorController {
 
     // Add Lesson
     @PostMapping("/{instructorId}/add-lesson")
-    public ResponseEntity<String> addLesson(@PathVariable Long instructorId,@RequestBody Lesson lesson) {
+    public ResponseEntity<String> addLesson(@PathVariable Long instructorId, @RequestBody Lesson lesson) {
         try {
             instructorService.addLesson(instructorId, lesson);
             return ResponseEntity.ok("Lesson added successfully");
@@ -41,7 +43,7 @@ public class InstructorController {
 
     // Remove Lesson
     @DeleteMapping("/{instructorId}/remove-lesson")
-    public ResponseEntity<String> removeLesson(@PathVariable Long instructorId,@RequestBody Lesson lesson) {
+    public ResponseEntity<String> removeLesson(@PathVariable Long instructorId, @RequestBody Lesson lesson) {
         try {
             instructorService.removeLesson(instructorId, lesson);
             return ResponseEntity.ok("Lesson deleted successfully");
@@ -54,7 +56,7 @@ public class InstructorController {
 
     // Add Assignment
     @PostMapping("/{instructorId}/add-assignment")
-    public ResponseEntity<String> addAssignment(@PathVariable Long instructorId,@RequestBody Assignment assignment) {
+    public ResponseEntity<String> addAssignment(@PathVariable Long instructorId, @RequestBody Assignment assignment) {
         try {
             instructorService.addAssignment(instructorId, assignment);
             return ResponseEntity.ok("Assignment added successfully");
@@ -67,7 +69,7 @@ public class InstructorController {
 
     // Remove Assignment
     @DeleteMapping("/{instructorId}/remove-assignment")
-    public ResponseEntity<String> removeAssignment(@PathVariable Long instructorId,@RequestBody Assignment assignment) {
+    public ResponseEntity<String> removeAssignment(@PathVariable Long instructorId, @RequestBody Assignment assignment) {
         try {
             instructorService.removeAssignment(instructorId, assignment);
             return ResponseEntity.ok("Assignment deleted successfully");
@@ -80,7 +82,7 @@ public class InstructorController {
 
     // Add Grade
     @PostMapping("/{instructorId}/add-assignment-grade")
-    public ResponseEntity<String> addGrade(@PathVariable Long instructorId,@RequestBody AssignmentGrade grade) {
+    public ResponseEntity<String> addGrade(@PathVariable Long instructorId, @RequestBody AssignmentGrade grade) {
         try {
             instructorService.addAssignmentGrade(instructorId, grade);
             return ResponseEntity.ok("Grade added successfully");
@@ -120,4 +122,32 @@ public class InstructorController {
         }
     }
 
+    @PostMapping({"/{instructorId}/add-question"})
+    public ResponseEntity<String> addQuestion(@PathVariable Long instructorId, @RequestBody Question question) {
+        try {
+            instructorService.addQuestion(instructorId, question);
+            return ResponseEntity.ok("Question added successfully");
+        } catch (PermissionDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("You do not have permission to add Question to this course.");
+        }
+    }
+
+    @PostMapping({"/{instructorId}/add-quiz"})
+    public ResponseEntity<String> addQuiz(@PathVariable Long instructorId, @RequestParam Long courseId, @RequestParam Quiz.QuizType quizType, @RequestParam int numberOfQuestions) {
+        try {
+            instructorService.createQuiz(courseId, instructorId, quizType, numberOfQuestions);
+            return ResponseEntity.ok("Quiz added successfully");
+        } catch (PermissionDeniedException e) {
+            return ResponseEntity.status(403).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("You do not have permission to add Quiz to this course.");
+        }
+    }
+
+    @GetMapping("/quizzes")
+    public ResponseEntity<List<Quiz>> getAllQuiz() {
+        return ResponseEntity.ok(instructorService.getAllQuizzes());
+    }
 }

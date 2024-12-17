@@ -1,4 +1,4 @@
-package com.example.LMS.notificationsystem;
+package com.example.LMS.notificationsystemTests;
 import com.example.LMS.UserManagement.Instructor.Instructor;
 import com.example.LMS.UserManagement.Student.Student;
 import com.example.LMS.UserManagement.Student.StudentService;
