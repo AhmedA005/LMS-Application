@@ -1,5 +1,7 @@
 package com.example.LMS.Authentication;
  
+import com.example.LMS.UserManagement.Student.Student;
+import com.example.LMS.UserManagement.Student.StudentService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager; 
@@ -11,17 +13,21 @@ import com.example.LMS.Authentication.AuthRequest;
 import com.example.LMS.Authentication.UserInfo;
 import com.example.LMS.JWT.JwtService;
 import com.example.LMS.Authentication.UserInfoService;
-  
+
+import java.util.List;
+
 @RestController
 @RequestMapping("/auth") 
 public class UserController { 
     private final UserInfoService service; 
     private final JwtService jwtService; 
-    private final AuthenticationManager authenticationManager; 
-    UserController(UserInfoService service, JwtService jwtService, AuthenticationManager authenticationManager) { 
+    private final AuthenticationManager authenticationManager;
+    private final StudentService studentService;
+    UserController(UserInfoService service, JwtService jwtService, AuthenticationManager authenticationManager, StudentService studentService) {
         this.service = service; 
         this.jwtService = jwtService; 
-        this.authenticationManager = authenticationManager; 
+        this.authenticationManager = authenticationManager;
+        this.studentService = studentService;
     }
   
     @PostMapping("/register") 
@@ -44,5 +50,6 @@ public class UserController {
     public String hello() {
         return "Hello World!";
     }
+
   
 }
