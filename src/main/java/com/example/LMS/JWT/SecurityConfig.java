@@ -43,6 +43,8 @@ public class SecurityConfig {
                         .requestMatchers("/auth/generateToken", "/auth/register").permitAll()
                         .requestMatchers("/auth/hello").authenticated()
                         .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
+                        .requestMatchers("/instructor/**").hasAnyAuthority("INSTRUCTOR")
+                        .requestMatchers("/student/**").hasAnyAuthority("STUDENT")
                 )
                 .httpBasic(withDefaults()).csrf((csrf) -> csrf.disable())
                 .sessionManagement((session) -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
