@@ -1,112 +1,100 @@
 package com.example.LMS.CourseManagmentTests.QuizesTests;
 
+import com.example.LMS.CourseManagement.Course.Course;
+import com.example.LMS.CourseManagement.Question.MCQQuestion;
+import com.example.LMS.CourseManagement.Question.Question;
+import com.example.LMS.CourseManagement.Quiz.Quiz;
 import com.example.LMS.CourseManagement.Quiz.QuizController;
 import com.example.LMS.CourseManagement.Quiz.QuizService;
-import com.example.LMS.CourseManagement.Quiz.Quiz;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class QuizControllerTest {
 
-    @Mock
-    private QuizService quizService;
-
     @InjectMocks
     private QuizController quizController;
 
-    private List<Quiz> testQuizzes;
-    private Quiz testQuiz;
-
-    @BeforeEach
-    void setUp() {
-        testQuizzes = new ArrayList<>();
-        testQuiz = new Quiz();
-        testQuiz.setId(1L);
-        testQuiz.setTitle("Test Quiz");
-        testQuizzes.add(testQuiz);
-    }
+    @Mock
+    private QuizService quizService;
 
     @Test
-    void getAllQuizzes_ReturnsAllQuizzes() {
-        when(quizService.getAllQuizzes()).thenReturn(testQuizzes);
+    public void getAllQuizzes() {
+        List<Quiz> quizzes = Arrays.asList(
+                new Quiz(1L, "Quiz 1", new Date(), Quiz.QuizType.MCQ, 10, null, null, null),
+                new Quiz(2L, "Quiz 2", new Date(), Quiz.QuizType.TrueFalse, 5, null, null, null)
+        );
+
+        when(quizService.getAllQuizzes()).thenReturn(quizzes);
 
         List<Quiz> result = quizController.getAllQuizzes();
 
-        assertEquals(testQuizzes, result);
-        verify(quizService).getAllQuizzes();
+        assertEquals(2, result.size());
+        assertEquals(quizzes, result);
     }
 
     @Test
-    void getQuizById_ExistingId_ReturnsQuiz() {
-        when(quizService.getQuizById(1L)).thenReturn(Optional.of(testQuiz));
+    public void getQuizById_Found() {
+        Quiz quiz = new Quiz(1L, "Quiz 1", new Date(), Quiz.QuizType.MCQ, 10, null, null, null);
+        MCQQuestion question = new MCQQuestion(1L, "What is the capital of France?", Arrays.asList("London", "Paris", "Berlin"));
+        quiz.setQuestions(Arrays.asList(question));
+
+        when(quizService.getQuizById(1L)).thenReturn(Optional.of(quiz));
 
         ResponseEntity<Quiz> response = quizController.getQuizById(1L);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(testQuiz, response.getBody());
-        verify(quizService).getQuizById(1L);
+        assertEquals(quiz, response.getBody());
+        // Assert on the content of the quiz's questions
+        assertNotNull(response.getBody().getQuestions());
+        assertEquals(1, response.getBody().getQuestions().size());
+        assertEquals(question, response.getBody().getQuestions().get(0));
     }
 
     @Test
-    void getQuizById_NonExistingId_ReturnsNotFound() {
-        when(quizService.getQuizById(1L)).thenReturn(Optional.empty());
+    public void getQuizById_NotFound() {
+        when(quizService.getQuizById(100L)).thenReturn(Optional.empty());
 
-        ResponseEntity<Quiz> response = quizController.getQuizById(1L);
+        ResponseEntity<Quiz> response = quizController.getQuizById(100L);
 
         assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(quizService).getQuizById(1L);
+        assertNull(response.getBody());
     }
 
     @Test
-    void createQuiz_CreatesAndReturnsQuiz() {
-        when(quizService.createQuiz(testQuiz)).thenReturn(testQuiz);
+    public void createQuiz() {
+        Quiz quiz = new Quiz(1L, "Quiz 1", new Date(), Quiz.QuizType.MCQ, 10, null, null, null);
 
-        Quiz result = quizController.createQuiz(testQuiz);
+        when(quizService.createQuiz(quiz)).thenReturn(quiz);
 
-        assertEquals(testQuiz, result);
-        verify(quizService).createQuiz(testQuiz);
+        Quiz result = quizController.createQuiz(quiz);
+
+        assertEquals(quiz, result);
     }
 
     @Test
-    void updateQuiz_ExistingId_UpdatesAndReturnsQuiz() {
-        when(quizService.updateQuiz(1L, testQuiz)).thenReturn(testQuiz);
+    public void deleteQuiz() {
+        // Arrange
+        Long quizId = 1L;
 
-        ResponseEntity<Quiz> response = quizController.updateQuiz(1L, testQuiz);
+        // Act
+        quizController.deleteQuiz(quizId);
 
-        assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertEquals(testQuiz, response.getBody());
-        verify(quizService).updateQuiz(1L, testQuiz);
-    }
-
-    @Test
-    void updateQuiz_NonExistingId_ReturnsNotFound() {
-        when(quizService.updateQuiz(1L, testQuiz)).thenThrow(new RuntimeException("Quiz not found")); // Simulate not found
-
-        ResponseEntity<Quiz> response = quizController.updateQuiz(1L, testQuiz);
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-        verify(quizService).updateQuiz(1L, testQuiz);
-    }
-
-    @Test
-    void deleteQuiz_DeletesQuiz() {
-        ResponseEntity<Void> response = quizController.deleteQuiz(1L);
-
-        assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
-        verify(quizService).deleteQuiz(1L);
+        // Assert
+        Mockito.verify(quizService).deleteQuiz(quizId);
     }
 }

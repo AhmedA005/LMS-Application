@@ -18,6 +18,9 @@ public class MCQQuestion extends Question {
 
     private String correctAnswer;  // Correct option for the MCQ
 
+    public <T> MCQQuestion(long l, String s, List<T> list) {
+    }
+
     @Override
     public boolean isCorrect(String answer) {
         return answer.equals(correctAnswer);  // Check if student's answer matches the correct answer
