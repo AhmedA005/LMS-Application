@@ -3,6 +3,7 @@ package com.example.LMS.CourseManagement.Course;
 import com.example.LMS.CourseManagement.Assignment.Assignment;
 import com.example.LMS.CourseManagement.Lesson.Lesson;
 import com.example.LMS.UserManagement.Instructor.Instructor;
+import com.example.LMS.mediafiles.Mediafiles;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -22,6 +23,9 @@ public class Course {
     private String title;
     private String description;
     private int duration; // Duration in weeks
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Mediafiles> mediaFiles;
 
     @ManyToOne
     @JoinColumn(name = "instructor_id", nullable = false)
