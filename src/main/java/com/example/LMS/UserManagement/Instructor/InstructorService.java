@@ -227,38 +227,11 @@ public class InstructorService {
             throw new PermissionDeniedException("Instructor does not have permission to modify this course.");
         }
 
-        List<Question> questions = null;
-
-        // Based on the quizType, fetch the questions from the appropriate repository
-        if (quizType == Quiz.QuizType.MCQ) {
-            questions = mcqQuestionRepository.findByCourseId(courseId);
-        } else if (quizType == Quiz.QuizType.ShortAnswer) {
-            questions = shortAnswerRepository.findByCourseId(courseId);
-        } else if (quizType == Quiz.QuizType.TrueFalse) {
-            questions = trueFalseQuestionRepository.findByCourseId(courseId);
-        } else {
-            throw new IllegalArgumentException("Invalid quiz type.");
-        }
-
-        Set<Question> questionSet = new HashSet<>();
-
-        // Randomly select questions
-        while (questionSet.size() < numberOfQuestions && !questions.isEmpty()) {
-            int questionNumber = (int) (Math.random() * questions.size());
-            questionSet.add(questions.get(questionNumber));
-        }
-
-        // Convert the Set to a List (if needed)
-        List<Question> finalQuestions = new ArrayList<>(questionSet);
-
-        // Create the quiz and set all properties, including questions
         Quiz quiz = new Quiz();
         quiz.setNumberOfQuestions(numberOfQuestions);
         quiz.setCreatedDate(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
         quiz.setCourse(course);
         quiz.setQuizType(quizType);
-        quiz.setQuestions(finalQuestions); // Set the selected questions
-
         // Save the quiz to the repository
         quizRepository.save(quiz);
     }
@@ -285,11 +258,11 @@ public class InstructorService {
 
     }
 
-    @Transactional
-    public List<Quiz> getAllQuizzes() {
-        List<Quiz> quizzes = quizRepository.findAll();
-        quizzes.forEach(quiz -> quiz.getQuestions().size());  // Force loading the questions
-        return quizzes;
-    }
+//    @Transactional
+//    public List<Quiz> getAllQuizzes() {
+//        List<Quiz> quizzes = quizRepository.findAll();
+//        quizzes.forEach(quiz -> quiz.getQuestions().size());  // Force loading the questions
+//        return quizzes;
+//    }
 
 }

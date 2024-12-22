@@ -1,6 +1,8 @@
 package com.example.LMS.CourseManagement.Quiz;
 
+import com.example.LMS.CourseManagement.Question.Question;
 import com.example.LMS.UserManagement.Student.Student;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,6 +32,15 @@ public class QuizAttempt {
     @ManyToOne
     @JoinColumn(name = "student_id")
     private Student student;
+
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(
+            name = "quiz_questions",
+            joinColumns = @JoinColumn(name = "quiz_id"),
+            inverseJoinColumns = @JoinColumn(name = "question_id")
+    )
+    @JsonManagedReference
+    private List<Question> questions;
 
 //    @ElementCollection
 //    private List<Long> selectedQuestionIds; // Stores IDs of randomly selected questions

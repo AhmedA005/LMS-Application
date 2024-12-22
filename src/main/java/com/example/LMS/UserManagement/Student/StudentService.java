@@ -11,7 +11,7 @@ import com.example.LMS.CourseManagement.Grade.AssignmentGrade;
 import com.example.LMS.CourseManagement.Grade.AssignmentGradeRepository;
 import com.example.LMS.CourseManagement.Lesson.Lesson;
 import com.example.LMS.CourseManagement.Lesson.LessonRepository;
-import com.example.LMS.CourseManagement.Question.Question;
+import com.example.LMS.CourseManagement.Question.*;
 import com.example.LMS.CourseManagement.Quiz.Quiz;
 import com.example.LMS.CourseManagement.Quiz.QuizAttempt;
 import com.example.LMS.CourseManagement.Quiz.QuizAttemptRepository;
@@ -25,9 +25,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -42,6 +40,9 @@ public class StudentService {
     private final QuizAttemptRepository quizAttemptRepository;
     private final AssignmentRepository assignmentRepository;
     private final AssignmentAttemptRepository assignmentAttemptRepository;
+    private final MCQQuestionRepository mcqQuestionRepository;
+    private final TrueFalseQuestionRepository trueFalseQuestionRepository;
+    private final ShortAnswerRepository shortAnswerRepository;
 
     public Student findById(Long studentId) {
         return studentRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Student not found with ID: " + studentId));
@@ -97,37 +98,77 @@ public class StudentService {
         return gradeRepository.findAll().stream().filter(grade -> grade.getStudentId().equals(studentId)).toList();
     }
 
-    public Optional<Quiz> getQuiz(Long quizId, Long studentId) {
+    public String getQuiz(Long quizId, Long studentId) {
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Course not found"));
-        Optional<Quiz> quiz = quizRepository.findById(quizId);
+        Quiz quiz = quizRepository.findById(quizId).get();
 
-        if (!enrollmentRepository.findByCourse(quiz.get().getCourse()).stream().anyMatch(enrollment -> enrollment.getStudent().getId().equals(studentId)))
+        if (!enrollmentRepository.findByCourse(quiz.getCourse()).stream().anyMatch(enrollment -> enrollment.getStudent().getId().equals(studentId)))
             throw new PermissionDeniedException("Student is not enrolled in the course associated with this quiz.");
 
-        return quizRepository.findById(quizId);
+        Course course = quiz.getCourse();
+
+        List<Question> questions = null;
+
+        // Based on the quizType, fetch the questions from the appropriate repository
+        if (quiz.getQuizType() == Quiz.QuizType.MCQ) {
+            questions = mcqQuestionRepository.findByCourseId(course.getId());
+        } else if (quiz.getQuizType() == Quiz.QuizType.ShortAnswer) {
+            questions = shortAnswerRepository.findByCourseId(course.getId());
+        } else if (quiz.getQuizType() == Quiz.QuizType.TrueFalse) {
+            questions = trueFalseQuestionRepository.findByCourseId(course.getId());
+        } else {
+            throw new IllegalArgumentException("Invalid quiz type.");
+        }
+
+        Set<Question> questionSet = new HashSet<>();
+
+        // Randomly select questions
+        while (questionSet.size() < quiz.getNumberOfQuestions() && !questions.isEmpty()) {
+            int questionNumber = (int) (Math.random() * questions.size());
+            questionSet.add(questions.get(questionNumber));
+        }
+
+        // Convert the Set to a List (if needed)
+        List<Question> finalQuestions = new ArrayList<>(questionSet);
+
+        String output = "Number of questions: " + quiz.getNumberOfQuestions() + "\n" + quiz.getQuizType().toString();
+        for (Question question : finalQuestions) {
+            output += "\n" + question.getQuestionText();
+            if(question instanceof MCQQuestion)
+                output += "\n" + ((MCQQuestion) question).getOptions();
+            output += "\n";
+        }
+
+
+        QuizAttempt quizAttempt = new QuizAttempt();
+        quizAttempt.setQuiz(quiz);
+        quizAttempt.setStudent(student);
+        quizAttempt.setQuestions(finalQuestions);
+        quizAttemptRepository.save(quizAttempt);
+        return output;
     }
 
     public String takeQuiz(Long studentId, Long quizId, List<String> answers) {
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new IllegalArgumentException("Course not found"));
-        Optional<Quiz> quiz = quizRepository.findById(quizId);
+        Quiz quiz = quizRepository.findById(quizId).get();
+        QuizAttempt quizAttempt = quizAttemptRepository.findByQuizAndStudent(quiz,student);
 
-        if (!enrollmentRepository.findByCourse(quiz.get().getCourse()).stream().anyMatch(enrollment -> enrollment.getStudent().getId().equals(studentId)))
-            throw new PermissionDeniedException("Student is not enrolled in the course associated with this quiz.");
+        if(quizAttempt.getFeedback() != null) {
+            return "You already submitted an answer for this exam and your score is: " + quizAttempt.getScore();
+        }
+
 
         int i = 0, score = 0;
-        for (Question question : quiz.get().getQuestions()) {
+        for (Question question : quizAttempt.getQuestions()) {
             if (question.isCorrect(answers.get(i++))) score++;
         }
-        QuizAttempt attempt = new QuizAttempt();
-        attempt.setScore(score);
-        attempt.setQuiz(quiz.get());
-        attempt.setStudentAnswers(answers);
-        attempt.setAttemptDate(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
-        attempt.setStudent(student);
-        quizAttemptRepository.save(attempt);
-        String feedback = "Your score in " + quiz.get().getTitle()+" is "+ score + " out of " + quiz.get().getNumberOfQuestions();
+        quizAttempt.setScore(score);
+        quizAttempt.setStudentAnswers(answers);
+        quizAttempt.setAttemptDate(Date.from(LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant()));
+        quizAttemptRepository.save(quizAttempt);
+        String feedback = "Your score in " + quiz.getTitle()+" is "+ score + " out of " + quiz.getNumberOfQuestions();
         notificationService.sendNotificationToStudent(feedback, student);
-        attempt.setFeedback(feedback);
+        quizAttempt.setFeedback(feedback);
         return feedback;
     }
 

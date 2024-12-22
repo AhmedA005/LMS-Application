@@ -30,14 +30,6 @@ public class Quiz {
     private QuizType quizType;
     private int numberOfQuestions;
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    @JoinTable(
-            name = "quiz_questions",
-            joinColumns = @JoinColumn(name = "quiz_id"),
-            inverseJoinColumns = @JoinColumn(name = "question_id")
-    )
-    @JsonManagedReference
-    private List<Question> questions;
 
     @ManyToOne
     @JoinColumn(name = "course_id")
@@ -51,16 +43,16 @@ public class Quiz {
     public enum QuizType {
         MCQ, TrueFalse, ShortAnswer
     }
-    @Override
-    public String toString() {
-        String quiz = "Number of questions: " + numberOfQuestions + "\n" + quizType.toString();
-        for (Question question : questions) {
-            quiz += "\n" + question.getQuestionText();
-            if(question instanceof MCQQuestion)
-                quiz += "\n" + ((MCQQuestion) question).getOptions();
-            quiz += "\n";
-        }
-        return quiz;
-    }
+//    @Override
+//    public String toString() {
+//        String quiz = "Number of questions: " + numberOfQuestions + "\n" + quizType.toString();
+//        for (Question question : questions) {
+//            quiz += "\n" + question.getQuestionText();
+//            if(question instanceof MCQQuestion)
+//                quiz += "\n" + ((MCQQuestion) question).getOptions();
+//            quiz += "\n";
+//        }
+//        return quiz;
+//    }
 
 }
