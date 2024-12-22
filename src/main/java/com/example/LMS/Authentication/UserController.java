@@ -1,5 +1,7 @@
 package com.example.LMS.Authentication;
  
+import com.example.LMS.UserManagement.Admin.Admin;
+import com.example.LMS.UserManagement.Instructor.Instructor;
 import com.example.LMS.UserManagement.Student.Student;
 import com.example.LMS.UserManagement.Student.StudentService;
 import org.springframework.http.HttpStatus;
@@ -29,12 +31,36 @@ public class UserController {
         this.authenticationManager = authenticationManager;
         this.studentService = studentService;
     }
-  
-    @PostMapping("/register") 
-    public ResponseEntity<String> addNewUser(@RequestBody UserInfo userInfo) { 
-        String response = service.addUser(userInfo); 
-        return ResponseEntity.status(HttpStatus.CREATED).body(response); 
-    } 
+
+    @PostMapping("/register")
+    public ResponseEntity<String> addNewUser(@RequestBody UserInfo userInfo) {
+        try {
+            UserInfo user;
+            switch (userInfo.getRole()) {
+                case ADMIN:
+                    user = new Admin(userInfo.getName(), userInfo.getPassword(),
+                            userInfo.getEmail(), userInfo.getRole());
+                    break;
+                case STUDENT:
+                    user = new Student(userInfo.getName(), userInfo.getPassword(),
+                            userInfo.getEmail(), userInfo.getRole());
+                    break;
+                case INSTRUCTOR:
+                    user = new Instructor(userInfo.getName(), userInfo.getPassword(),
+                            userInfo.getEmail(), userInfo.getRole());
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid role");
+            }
+
+            String response = service.addUser(user);
+            return ResponseEntity.status(HttpStatus.CREATED).body(response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error during registration: " + e.getMessage());
+        }
+    }
   
     @PostMapping("/generateToken") 
     public ResponseEntity<String> authenticateAndGetToken(@RequestBody AuthRequest authRequest) { 

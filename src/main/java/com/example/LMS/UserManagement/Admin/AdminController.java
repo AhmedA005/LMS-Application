@@ -1,5 +1,7 @@
 package com.example.LMS.UserManagement.Admin;
 
+import com.example.LMS.Authentication.UserInfo;
+import com.example.LMS.Authentication.UserInfoService;
 import com.example.LMS.CourseManagement.Course.Course;
 import com.example.LMS.CourseManagement.Course.CourseService;
 import com.example.LMS.UserManagement.Instructor.Instructor;
@@ -21,6 +23,7 @@ public class AdminController {
     private final StudentService studentService;
     private final InstructorService instructorService;
     private final CourseService courseService;
+    private final UserInfoService userInfoService;
 
     @PostMapping("/add-student")
     public ResponseEntity<String> addStudent(@RequestBody Student student) {
@@ -67,6 +70,11 @@ public class AdminController {
     public ResponseEntity<List<Student>> getEnrolledStudents(@PathVariable Long courseId) {
         List<Student> students = adminService.getEnrolledStudents(courseId);
         return ResponseEntity.ok(students);
+    }
+
+    @GetMapping("get-users")
+    public List<UserInfo> getUsers() {
+        return userInfoService.getAllUsers();
     }
 }
 
