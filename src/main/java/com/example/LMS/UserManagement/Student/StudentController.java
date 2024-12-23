@@ -103,19 +103,19 @@ public class StudentController {
 
     }
 
-    @PostMapping("/{studentId}/submit-assignment")
-    public ResponseEntity<String> submitAssignment(@PathVariable Long studentId, @RequestParam Long assignmentId, @RequestBody String answer) {
-        try {
-            String message = studentService.submitAssignment(studentId, assignmentId, answer);
-            return ResponseEntity.ok(message);
-        }
-        catch (IllegalArgumentException e) {
-            return ResponseEntity.status(500).body(e.getMessage());
-        }
-        catch (PermissionDeniedException e){
-            return ResponseEntity.ok(e.getMessage());
-        }
-    }
+//    @PostMapping("/{studentId}/submit-assignment")
+//    public ResponseEntity<String> submitAssignment(@PathVariable Long studentId, @RequestParam Long assignmentId, @RequestBody String answer) {
+//        try {
+//            String message = studentService.submitAssignment(studentId, assignmentId, answer);
+//            return ResponseEntity.ok(message);
+//        }
+//        catch (IllegalArgumentException e) {
+//            return ResponseEntity.status(500).body(e.getMessage());
+//        }
+//        catch (PermissionDeniedException e){
+//            return ResponseEntity.ok(e.getMessage());
+//        }
+//    }
 
     @PostMapping("/{studentId}/submit-assignment")
     public ResponseEntity<String> submitAssignment(
