@@ -21,6 +21,8 @@ public class Assignment {
 
     private String title;
     private String description;
+    private String submittedFilePath;
+
 
     @Override
     public String toString() {

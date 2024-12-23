@@ -9,9 +9,11 @@ import com.example.LMS.CourseManagement.Question.Question;
 import com.example.LMS.CourseManagement.Quiz.Quiz;
 import com.example.LMS.PermissionDeniedException;
 import com.example.LMS.UserManagement.Student.Student;
+import com.example.LMS.mediafiles.MediaFileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -21,6 +23,7 @@ import java.util.List;
 public class InstructorController {
     private final InstructorService instructorService;
     private final CourseService courseService;
+    private final MediaFileService mediaFileService;
 
     // Add Course
     @PostMapping("/add-course")
@@ -148,8 +151,32 @@ public class InstructorController {
         return courseService.getAllCourses();
     }
 
-    @GetMapping("/quizzes")
-    public ResponseEntity<List<Quiz>> getAllQuiz() {
-        return ResponseEntity.ok(instructorService.getAllQuizzes());
+    @PostMapping("/upload-course-content")
+    public ResponseEntity<String> uploadCourseContent(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("courseId") Long courseId) {
+        try {
+            mediaFileService.uploadMedia(file, courseId);
+            return ResponseEntity.ok("Course content uploaded successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
     }
+
+    @PostMapping("/upload-assignment")
+    public ResponseEntity<String> uploadAssignment(
+            @RequestParam("file") MultipartFile file,
+            @RequestParam("assignmentId") Long assignmentId) {
+        try {
+            mediaFileService.uploadMedia(file, assignmentId);
+            return ResponseEntity.ok("Assignment uploaded successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
+
+//    @GetMapping("/quizzes")
+//    public ResponseEntity<List<Quiz>> getAllQuiz() {
+//        return ResponseEntity.ok(instructorService.getAllQuizzes());
+//    }
 }

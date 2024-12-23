@@ -6,9 +6,11 @@ import com.example.LMS.CourseManagement.Enrollment.EnrollmentRequest;
 import com.example.LMS.CourseManagement.Grade.AssignmentGrade;
 import com.example.LMS.CourseManagement.Quiz.Quiz;
 import com.example.LMS.PermissionDeniedException;
+import com.example.LMS.mediafiles.MediaFileService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 import java.util.Optional;
@@ -19,6 +21,8 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class StudentController {
     private final StudentService studentService;
+    private final MediaFileService mediaFileService;
+
 
     @PostMapping("/enroll")
     public ResponseEntity<String> enrollInCourse(@RequestBody EnrollmentRequest enrollmentRequest) {
@@ -113,7 +117,19 @@ public class StudentController {
         }
     }
 
+    @PostMapping("/{studentId}/submit-assignment")
+    public ResponseEntity<String> submitAssignment(
+            @PathVariable Long studentId,
+            @RequestParam("assignmentId") Long assignmentId,
+            @RequestParam("file") MultipartFile file) {
+        try {
+            mediaFileService.uploadMedia(file, assignmentId);
+            return ResponseEntity.ok("Assignment submitted successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error: " + e.getMessage());
+        }
+    }
+
 
 
 }
-
