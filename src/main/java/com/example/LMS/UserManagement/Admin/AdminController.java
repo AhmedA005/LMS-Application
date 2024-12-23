@@ -4,15 +4,18 @@ import com.example.LMS.Authentication.UserInfo;
 import com.example.LMS.Authentication.UserInfoService;
 import com.example.LMS.CourseManagement.Course.Course;
 import com.example.LMS.CourseManagement.Course.CourseService;
+import com.example.LMS.PerformanceTracking.ReportService;
 import com.example.LMS.UserManagement.Instructor.Instructor;
 import com.example.LMS.UserManagement.Instructor.InstructorService;
 import com.example.LMS.UserManagement.Student.Student;
 import com.example.LMS.UserManagement.Student.StudentService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -24,6 +27,7 @@ public class AdminController {
     private final InstructorService instructorService;
     private final CourseService courseService;
     private final UserInfoService userInfoService;
+    private final ReportService reportService;
 
     @PostMapping("/add-student")
     public ResponseEntity<String> addStudent(@RequestBody Student student) {
@@ -77,6 +81,30 @@ public class AdminController {
     @GetMapping("get-users")
     public List<UserInfo> getUsers() {
         return userInfoService.getAllUsers();
+    }
+
+    @GetMapping("/generate-report")
+    public ResponseEntity<byte[]> generateReport(@RequestParam Long courseId) {
+        try {
+            byte[] report = reportService.generateExcelReport(courseId);
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=student_performance_report.xlsx")
+                    .body(report);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
+    @GetMapping("/generate-performance-chart")
+    public ResponseEntity<byte[]> generatePerformanceChart(@RequestParam Long courseId) {
+        try {
+            byte[] chart = reportService.generatePerformanceChart(courseId);
+            return ResponseEntity.ok()
+                    .header("Content-Disposition", "attachment; filename=student_performance_chart.png")
+                    .body(chart);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
     }
 }
 

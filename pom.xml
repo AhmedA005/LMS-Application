@@ -69,10 +69,10 @@
         </dependency>
 
 		<dependency>
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-			<version>2.2.220</version>
-		</dependency>
+		<groupId>com.h2database</groupId>
+		<artifactId>h2</artifactId>
+		<version>2.2.220</version>
+	</dependency>
 
 		<!-- Authentication dependencies -->
 
@@ -108,7 +108,16 @@
 			<artifactId>jjwt-jackson</artifactId> 
 			<version>0.11.5</version> 
 		</dependency>
-
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>5.2.3</version> <!-- Check for the latest version -->
+		</dependency>
+		<dependency>
+			<groupId>org.jfree</groupId>
+			<artifactId>jfreechart</artifactId>
+			<version>1.5.3</version> <!-- Check for the latest version -->
+		</dependency>
 	</dependencies>
 
 	<build>
