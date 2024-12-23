@@ -56,7 +56,7 @@ public class StudentController {
     }
 
     @GetMapping("/{studentId}/get-quiz")
-    public ResponseEntity<String> getQuiz(Long quizId, @PathVariable Long studentId) {
+    public ResponseEntity<String> getQuiz(@RequestParam Long quizId, @PathVariable Long studentId) {
         try {
             String quiz = studentService.getQuiz(quizId, studentId);
             return ResponseEntity.ok(quiz.toString());
