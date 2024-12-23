@@ -23,14 +23,24 @@ public class UserInfoService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+        System.out.println("Looking for user: " + username);
         Optional<UserInfo> userDetail = repository.findByName(username);
-        // Converting userDetail to UserDetails
+
+        if (userDetail.isEmpty()) {
+            System.out.println("User not found: " + username);
+        }
+
         return userDetail.map(UserInfoDetails::new)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
     }
+
 
     public String addUser(UserInfo userInfo) {
         userInfo.setPassword(encoder.encode(userInfo.getPassword()));
+        if(repository.findByEmail(userInfo.getEmail()).isPresent()) {
+            System.out.println("Email already exists");
+            return "Email already exists";
+        }
         repository.save(userInfo);
         return "User Added Successfully";
     }

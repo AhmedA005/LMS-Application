@@ -29,6 +29,7 @@ public class AdminController {
     public ResponseEntity<String> addStudent(@RequestBody Student student) {
         System.out.println("Received student: " + student);
         adminService.addStudent(student);
+        userInfoService.addUser(student);
         return ResponseEntity.ok("Student added successfully");
     }
 
@@ -41,6 +42,7 @@ public class AdminController {
     public ResponseEntity<String> addInstructor(@RequestBody Instructor instructor) {
         System.out.println("Received Instructor: " + instructor);
         adminService.addInstructor(instructor);
+        userInfoService.addUser(instructor);
         return ResponseEntity.ok("Instructor added successfully");
     }
 

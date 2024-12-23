@@ -3,15 +3,13 @@ package com.example.LMS.UserManagement.Student;
 import com.example.LMS.Authentication.UserInfo;
 import com.example.LMS.UserManagement.Role;
 import com.example.LMS.UserManagement.User;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.DiscriminatorValue;
-import jakarta.persistence.Entity;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
 
 @Entity
+@Inheritance(strategy = InheritanceType.TABLE_PER_CLASS)
 @DiscriminatorValue("STUDENT")
 @NoArgsConstructor
 public class Student extends UserInfo {

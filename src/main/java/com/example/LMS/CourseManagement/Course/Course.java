@@ -3,6 +3,8 @@ package com.example.LMS.CourseManagement.Course;
 import com.example.LMS.CourseManagement.Assignment.Assignment;
 import com.example.LMS.CourseManagement.Lesson.Lesson;
 import com.example.LMS.UserManagement.Instructor.Instructor;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -25,6 +27,7 @@ public class Course {
 
     @ManyToOne
     @JoinColumn(name = "instructor_id", nullable = false)
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
     private Instructor instructor; // Each course belongs to one instructor
 
     @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)

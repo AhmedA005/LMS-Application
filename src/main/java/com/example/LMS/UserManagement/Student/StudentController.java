@@ -58,7 +58,7 @@ public class StudentController {
     @GetMapping("/{studentId}/get-quiz")
     public ResponseEntity<String> getQuiz(Long quizId, @PathVariable Long studentId) {
         try {
-            Quiz quiz = studentService.getQuiz(quizId, studentId).get();
+            String quiz = studentService.getQuiz(quizId, studentId);
             return ResponseEntity.ok(quiz.toString());
         }
         catch (IllegalArgumentException e) {

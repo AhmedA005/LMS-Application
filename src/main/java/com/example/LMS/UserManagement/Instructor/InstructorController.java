@@ -2,6 +2,7 @@ package com.example.LMS.UserManagement.Instructor;
 
 import com.example.LMS.CourseManagement.Assignment.Assignment;
 import com.example.LMS.CourseManagement.Course.Course;
+import com.example.LMS.CourseManagement.Course.CourseService;
 import com.example.LMS.CourseManagement.Grade.AssignmentGrade;
 import com.example.LMS.CourseManagement.Lesson.Lesson;
 import com.example.LMS.CourseManagement.Question.Question;
@@ -19,6 +20,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class InstructorController {
     private final InstructorService instructorService;
+    private final CourseService courseService;
 
     // Add Course
     @PostMapping("/add-course")
@@ -94,11 +96,6 @@ public class InstructorController {
     }
 
 
-    // Mock method to simulate fetching authenticated instructor ID
-    private Long getAuthenticatedInstructorId() {
-        return 1L; // Example ID
-    }
-
     @GetMapping("/{courseId}/students")
     public ResponseEntity<List<Student>> getEnrolledStudents(@PathVariable Long courseId) {
         List<Student> students = instructorService.getEnrolledStudents(courseId);
@@ -144,6 +141,11 @@ public class InstructorController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("You do not have permission to add Quiz to this course.");
         }
+    }
+
+    @GetMapping("/get-courses")
+    public List<Course> getCourses() {
+        return courseService.getAllCourses();
     }
 
     @GetMapping("/quizzes")

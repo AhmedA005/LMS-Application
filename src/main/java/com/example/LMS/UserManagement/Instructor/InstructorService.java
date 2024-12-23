@@ -258,11 +258,11 @@ public class InstructorService {
 
     }
 
-//    @Transactional
-//    public List<Quiz> getAllQuizzes() {
-//        List<Quiz> quizzes = quizRepository.findAll();
-//        quizzes.forEach(quiz -> quiz.getQuestions().size());  // Force loading the questions
-//        return quizzes;
-//    }
+    @Transactional
+    public List<Quiz> getAllQuizzes() {
+        List<Quiz> quizzes = quizRepository.findAll();
+        quizzes.forEach(quiz -> quiz.getId());  // Force loading the questions
+        return quizzes;
+    }
 
 }

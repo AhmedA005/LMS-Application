@@ -5,6 +5,8 @@ import com.example.LMS.UserManagement.Role;
 import com.example.LMS.UserManagement.User;
 import jakarta.persistence.DiscriminatorValue;
 import jakarta.persistence.Entity;
+import jakarta.persistence.Inheritance;
+import jakarta.persistence.InheritanceType;
 import lombok.NoArgsConstructor;
 
 @Entity
