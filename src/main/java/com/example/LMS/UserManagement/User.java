@@ -1,36 +1,33 @@
 package com.example.LMS.UserManagement;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.List;
 
 @Entity
+@Inheritance(strategy = InheritanceType.JOINED)
+@Table(name = "app_user")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public abstract class User {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
     private String password;
     private int age;
+
+    @Column(unique = true, nullable = false)
     private String email;
-    Role role;
 
-    public User(Long id, String name, String password, int age, String email, Role role) {
-        this.id = id;
-        this.name = name;
-        this.password = password;
-        this.age = age;
-        this.email = email;
-        this.role = role;
-    }
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    public User() {
 
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public Long getId() {
-        return id;
-    }
 }

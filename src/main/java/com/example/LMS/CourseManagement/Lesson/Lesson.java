@@ -1,23 +1,29 @@
 package com.example.LMS.CourseManagement.Lesson;
 
-public class Lesson{
-    private int id;
+
+import com.example.LMS.CourseManagement.Course.Course;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import jakarta.persistence.*;
+import lombok.*;
+import org.antlr.v4.runtime.misc.NotNull;
+
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class Lesson {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    @ManyToOne
+    @JoinColumn(name = "course_id", nullable = false) // Maps to the course's primary key
+    @JsonBackReference
+    private Course course; // Each lesson belongs to one course
     private String title;
-    Lesson(int id,String title){
-        this.id=id;
-        this.title=title;
-    }
-    public int getId() {
-        return id;
-    }
+    @Column(nullable = false)
+    private String otp; // OTP for attendance
 
-
-
-    public String getTitle() {
-        return title;
-    }
-
-
-
-
+//    @ManyToOne
+//    private Course course; // Each lesson belongs to one course
 }

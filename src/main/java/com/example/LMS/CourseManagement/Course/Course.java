@@ -1,54 +1,49 @@
 package com.example.LMS.CourseManagement.Course;
 
+import com.example.LMS.CourseManagement.Assignment.Assignment;
 import com.example.LMS.CourseManagement.Lesson.Lesson;
-import java.util.ArrayList;
+import com.example.LMS.UserManagement.Instructor.Instructor;
+import com.example.LMS.mediafiles.Mediafiles;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import jakarta.persistence.*;
+import lombok.*;
 
+import java.util.List;
+
+@Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
 public class Course {
-    private int courseId;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     private String title;
     private String description;
-    private ArrayList<Lesson> lessons;
-    private ArrayList<Media> medias;
+    private int duration; // Duration in weeks
 
-    public Course(int courseId, String title) {
-        this.courseId = courseId;
-        this.title = title;
-        this.lessons = new ArrayList<>();
-        this.medias = new ArrayList<>();
-    }
+    @ManyToOne
+    @JoinColumn(name = "instructor_id", nullable = false)
+    @JsonInclude(JsonInclude.Include.NON_ABSENT)
+    private Instructor instructor; // Each course belongs to one instructor
 
-    public int getCourseId() {
-        return courseId;
-    }
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<Lesson> lessons; // A course has multiple lessons
 
-    public String getTitle() {
-        return title;
-    }
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL) // Use the field name from Assignment
+    @JsonManagedReference
+    private List<Assignment> assignments;
 
-    public void setDescription(String description) {
-        this.description = description;
-    }
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    private List<Mediafiles> mediaFiles;
 
-    public String getDescription() {
-        return description;
-    }
 
-    public void addLesson(Lesson lesson) {
-        lessons.add(lesson);
-    }
-
-    public Lesson getLesson(int id) {
-        for (Lesson lesson : lessons) {
-            if (lesson.getId() == id) return lesson;
-        }
-        return null;
-    }
-
-    public void uploadMedia(Media media) {
-        medias.add(media);
-    }
-
-    public ArrayList<Media> getAllMedias() {
-        return medias;
+    public Course(Long courseId) {
+        this.id = courseId;
     }
 }
